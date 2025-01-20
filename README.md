@@ -5,16 +5,16 @@ PureMovies là một userscript hoàn hảo dành cho những ai yêu thích tr�
 
 ## Hướng dẫn sử dụng
 1) Cài đặt một trong các trình quản lý userscript sau:
-   - [Violentmonkey](https://violentmonkey.github.io/get-it/)
-   - [Tampermonkey](https://www.tampermonkey.net/)
-   - [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/)
+   - <a href="https://violentmonkey.github.io/get-it/" target="_blank" rel="noopener noreferrer">Violentmonkey</a>
+   - <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener noreferrer">Tampermonkey</a>
+   - <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank" rel="noopener noreferrer">Greasemonkey</a>
 
-2) Cài đặt userscript [**tại đây**](https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/PureMovies.user.js)
+2) Cài đặt userscript <a href="https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/PureMovies.user.js" target="_blank" rel="noopener noreferrer">**tại đây**</a>
 
 3) Truy cập vào một trong các trang web sau để trải nghiệm:
-   - [KKPhim](https://kkphim.com/) | [🔗1](https://kkphim1.com/) | [🔗2](https://kkphim.vip/) | [🔗3](https://img.phimapi.com/) | [🔗4](https://216.180.226.222/)
-   - [NguonC](https://phim.nguonc.com/)
-   - [OPhim](https://ophim.live/) | [🔗1](https://ophim.movie/)
+   - <a href="https://kkphim.com/" target="_blank" rel="noopener noreferrer">KKPhim</a> | <a href="https://kkphim1.com/" target="_blank" rel="noopener noreferrer">🔗1</a> | <a href="https://kkphim.vip/" target="_blank" rel="noopener noreferrer">🔗2</a> | <a href="https://img.phimapi.com/" target="_blank" rel="noopener noreferrer">🔗3</a> | <a href="https://216.180.226.222/" target="_blank" rel="noopener noreferrer">🔗4</a>
+   - <a href="https://phim.nguonc.com/" target="_blank" rel="noopener noreferrer">NguonC</a>
+   - <a href="https://ophim.live/" target="_blank" rel="noopener noreferrer">OPhim</a> | <a href="https://ophim.movie/" target="_blank" rel="noopener noreferrer">🔗1</a>
    - AVDBapi (coming soon)
   
 &nbsp;
