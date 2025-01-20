@@ -7,7 +7,7 @@ PureMovies là một userscript hoàn hảo dành cho những ai yêu thích tr�
 1) Cài đặt một trong các trình quản lý userscript sau:
    - <a href="https://violentmonkey.github.io/get-it/" target="_blank" rel="noopener noreferrer">Violentmonkey</a>
    - <a href="https://www.tampermonkey.net/" target="_blank" rel="noopener noreferrer">Tampermonkey</a>
-   - <a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank" rel="noopener noreferrer">Greasemonkey</a>
+   - ~~<a href="https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/" target="_blank" rel="noopener noreferrer">Greasemonkey</a>~~
 
 2) Cài đặt userscript <a href="https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/PureMovies.user.js" target="_blank" rel="noopener noreferrer">**tại đây**</a>
 
