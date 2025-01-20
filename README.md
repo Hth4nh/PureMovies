@@ -11,7 +11,7 @@ PureMovies là một userscript hoàn hảo dành cho những ai yêu thích tr�
 
 2) Cài đặt userscript <a href="https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/PureMovies.user.js" target="_blank" rel="noopener noreferrer">**tại đây**</a>
 
-3) Truy cập vào một trong các trang web sau để trải nghiệm:
+3) Truy cập vào các trang web sau để trải nghiệm:
    - <a href="https://kkphim.com/" target="_blank" rel="noopener noreferrer">KKPhim</a> | <a href="https://kkphim1.com/" target="_blank" rel="noopener noreferrer">🔗1</a> | <a href="https://kkphim.vip/" target="_blank" rel="noopener noreferrer">🔗2</a> | <a href="https://img.phimapi.com/" target="_blank" rel="noopener noreferrer">🔗3</a> | <a href="https://216.180.226.222/" target="_blank" rel="noopener noreferrer">🔗4</a>
    - <a href="https://phim.nguonc.com/" target="_blank" rel="noopener noreferrer">NguonC</a>
    - <a href="https://ophim.live/" target="_blank" rel="noopener noreferrer">OPhim</a> | <a href="https://ophim.movie/" target="_blank" rel="noopener noreferrer">🔗1</a>
