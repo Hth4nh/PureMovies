@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name             PureMovies
 // @namespace        Hth4nh
-// @version          1.2.1
+// @version          1.2.2
 // @description      PureMovies là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @author           Thành Hoàng Trần (@hth4nh) và Team CukiPirate
 // @updateURL        https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/PureMovies.user.js
@@ -138,7 +138,12 @@ async function changeUrl(_url) {
 
     // Change url
     if (Hls.isSupported()) {
-        const hls = new Hls();
+        const hls = new Hls({
+            xhrSetup: (xhr) => {
+                console.log(xhr);
+                xhr.setRequestHeader('Referer', _url);
+            }
+        });
 
         hls.loadSource(blobUrl);
         hls.attachMedia(window.player.video);
@@ -270,7 +275,7 @@ function initIframe(parentQuery = "body", callbackFn = () => {}) {
     window.Hls ?? await loadScript("https://cdn.jsdelivr.net/npm/hls.js");
     window.Artplayer ?? await loadScript("https://cdn.jsdelivr.net/npm/artplayer");
 
-    if (location.hostname.includes("kkphim") && location.pathname.startsWith("/index.php/vod/detail/")) {
+    if (location.hostname.includes("kkphim") && (location.pathname.startsWith("/index.php/vod/detail/") || location.pathname.startsWith("/phim/"))) {
         initPlayer("#list_episode > div:nth-child(2)");
     }
     else if (location.hostname.includes("nguonc")) {
