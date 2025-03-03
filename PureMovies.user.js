@@ -30,7 +30,7 @@
 
 /* global Artplayer, Hls, url */
 
-let DEBUG = true;
+let DEBUG = false;
 
 try {
     window.url = url;
