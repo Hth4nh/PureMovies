@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name             PureMovies
 // @namespace        Hth4nh
-// @version          1.2.3
+// @version          1.2.3.1
 // @description      PureMovies là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @author           Thành Hoàng Trần (@hth4nh) và Team CukiPirate
 // @updateURL        https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/PureMovies.user.js
@@ -170,11 +170,13 @@ async function detectEpisodeList(targetQuery, epsListParentQuery) {
     const targetNode = document.querySelector(targetQuery);
     if (targetNode.lastElementChild.classList.contains("px-8")) {
         initIframe(epsListParentQuery, callbackFn);
+        document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
     }
 
     const observer = new MutationObserver((mutationsList) => {
         if (targetNode.lastElementChild.classList.contains("px-8")) {
             initIframe(epsListParentQuery, callbackFn);
+            document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
         }
         else if (window.container) {
             window.container.src = "";
@@ -212,13 +214,29 @@ function createArtplayer(url = "") {
 function injectPlayer(container, parentQuery, callbackFn = () => {}) {
     container.style.display = "none"
 
+    if (!window.scrollToHereWrapper) {
+        let scrollToHere = document.createElement("div");
+        scrollToHere.style.position = "absolute"
+        scrollToHere.style.bottom = "10vh"
+
+        let scrollToHereWrapper = document.createElement("div");
+        scrollToHereWrapper.style.position = "relative"
+
+        scrollToHereWrapper.append(scrollToHere);
+
+        window.scrollToHere = scrollToHere;
+        window.scrollToHereWrapper = scrollToHereWrapper;
+    }
+
     // Add to HTML
     let parent = document.querySelector(parentQuery);
+    parent.append(window.scrollToHereWrapper);
     parent.append(container);
 
     // Add click event to change video
     parent.onclick = (e) => {
         e.preventDefault();
+
         if (e.target.tagName == 'A' && e.target.style.filter != "invert(1)") {
             if (window.prevA) window.prevA.style.filter = "";
             window.prevA = e.target;
@@ -227,6 +245,12 @@ function injectPlayer(container, parentQuery, callbackFn = () => {}) {
             container.style.display = "block";
 
             callbackFn(e.target.href, container);
+        }
+
+        if (e.target.tagName == 'A') {
+            window.scrollToHere.scrollIntoView({
+                behavior: 'smooth'
+            });
         }
     }
 }
@@ -237,6 +261,7 @@ function initPlayer(parentQuery = "body") {
     container.classList.add("vid-container", "w-full", "h-full", "mx-2", "sm:mx-0", "mt-4", "rounded-lg");
     container.style.aspectRatio = "16/9";
     container.style.overflow = "hidden";
+    container.style.maxHeight = "80vh";
 
     injectPlayer(container, parentQuery, (url) => changeUrl(url));
     window.player = createArtplayer();
@@ -252,6 +277,7 @@ function initIframe(parentQuery = "body", callbackFn = () => {}) {
         container.style.background = "black"
         container.style.aspectRatio = "16/9"
         container.style.overflow = "hidden"
+        container.style.maxHeight = "80vh";
 
         window.container = container;
     }
@@ -278,6 +304,7 @@ function initIframe(parentQuery = "body", callbackFn = () => {}) {
 
     if ((location.hostname.includes("kkphim") || location.hostname === "216.180.226.222") && (location.pathname.startsWith("/index.php/vod/detail/") || location.pathname.startsWith("/phim/"))) {
         initPlayer("#list_episode > div:nth-child(2)");
+        document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
     }
     else if (location.hostname.includes("nguonc")) {
         detectEpisodeList("#content", "#list_episode > div:nth-child(2)");
