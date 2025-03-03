@@ -223,6 +223,8 @@ function initEpsListOnClick(parentQuery) {
             if (window.prevA) window.prevA.style.filter = "";
             window.prevA = e.target;
 
+            e.target.style.filter = "invert(1)";
+
             window.container?.remove();
             window.container = createIframe(parentQuery, e.target.href);
         }
