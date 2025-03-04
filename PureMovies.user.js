@@ -246,10 +246,15 @@ function initEpsListOnClick(parentQuery) {
         e.preventDefault();
 
         if (e.target.tagName == 'A' && e.target.style.filter != "invert(1)") {
-            if (window.prevA) window.prevA.style.filter = "";
+            if (window.prevA) {
+                window.prevA.style.transform = "";
+                window.prevA.style.filter = "";
+            }
             window.prevA = e.target;
 
-            e.target.style.filter = "invert(1)";
+            e.target.style.transition = "0.5s"
+            e.target.style.transform = `rotate(180deg) scaleY(-1) scaleX(-1)`;
+            e.target.style.filter = `invert(1)`;
 
             window.container?.remove();
             window.container = createIframe(parentQuery, e.target.href);
@@ -335,10 +340,16 @@ function injectPlayer(container, parentQuery, callbackFn = () => {}) {
         e.preventDefault();
 
         if (e.target.tagName == 'A' && e.target.style.filter != "invert(1)") {
-            if (window.prevA) window.prevA.style.filter = "";
+            if (window.prevA) {
+                window.prevA.style.transform = "";
+                window.prevA.style.filter = "";
+            }
             window.prevA = e.target;
 
-            e.target.style.filter = "invert(1)";
+            e.target.style.transition = "0.5s"
+            e.target.style.transform = `rotate(180deg) scaleY(-1) scaleX(-1)`;
+            e.target.style.filter = `invert(1)`;
+
             container.style.display = "block";
 
             callbackFn(e.target.href, container);
