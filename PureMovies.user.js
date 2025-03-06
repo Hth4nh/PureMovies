@@ -164,7 +164,7 @@ async function convertToBlobURL(_url) {
 
     const regexList = [
         /(?<!#EXT-X-DISCONTINUITY[\s\S]*)#EXT-X-DISCONTINUITY\n(?:.*?\n){20}#EXT-X-DISCONTINUITY\n(?![\s\S]*#EXT-X-DISCONTINUITY)/g,
-        /#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:2.00|3.80|1.76|2.00|2.16|1.64|1.68|1.52|1.84|2.34|2.66|2.38|0.78|1.96)0000,\n.*\n){9}(?=#EXT-X-DISCONTINUITY)/g,
+        /#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:2.00|2.00|2.34|2.66|2.00|2.38|2.00|0.78|1.96)0000,\n.*\n){9}#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:2.00|2.74|2.22|2.00|1.36|2.00|2.00|0.72)0000,\n.*\n){8}(?=#EXT-X-DISCONTINUITY)/g,
     ]
 
     // Remove ads
