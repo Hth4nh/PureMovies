@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name             PureMovies
 // @namespace        Hth4nh
-// @version          1.2.5
+// @version          1.2.5.1
 // @description      PureMovies là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @author           Thành Hoàng Trần (@hth4nh) và Team CukiPirate
 // @updateURL        https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/PureMovies.user.js
@@ -19,6 +19,7 @@
 // @match            http*://vip.opstream15.com/share/*
 // @match            http*://vip.opstream16.com/share/*
 // @match            http*://vip.opstream17.com/share/*
+// @match            http*://vip.opstream90.com/share/*
 // @match            http*://kkphim.vip/*
 // @match            http*://kkphim1.com/*
 // @match            http*://img.phimapi.com/*
@@ -371,6 +372,7 @@ async function createArtplayer(url = "") {
                 "Pause": "Dừng",
                 "Show Setting": "Cài đặt",
                 "PIP Mode": "Phát trong hình",
+                "PIP Not Supported": "Không hỗ trợ phát trong hình",
                 "Fullscreen": "Phóng to",
                 "Play Speed": "Tốc độ phát",
                 "Aspect Ratio": "Tỷ lệ khung hình",
