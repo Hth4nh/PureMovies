@@ -207,7 +207,6 @@ async function convertToBlobURL(_url) {
                 },
             });
             console.error("Không tìm thấy quảng cáo");
-            //notyf.error("Không tìm thấy quảng cáo");<i class="fa-solid fa-triangle-exclamation"></i>
         }
     }
 
@@ -420,7 +419,7 @@ function createContainer(parentQuery = "body", tagName = "div") {
     container.style.background = "black"
     container.style.aspectRatio = "16/9"
     container.style.overflow = "hidden"
-    container.style.maxHeight = "70vh";
+    container.style.maxHeight = "min(70vh, calc(100vh - 40px - 4rem))";
     container.style.outline = `${CONFIG.debug*1}rem solid cyan`;
 
     // Add to HTML
@@ -470,11 +469,6 @@ function createContainer(parentQuery = "body", tagName = "div") {
 
     // Inject/replace player
     if (location.hostname.includes("opstream") || location.hostname.includes("streamc") || location.hostname.includes("player.phimapi")) {
-        notyf.open({
-            type: "info",
-            message: "Không cá độ, không tài xỉu. Người không chơi là người thắng."
-        });
-
         document.body.parentElement.style.background = "black";
 
         // Create video container
@@ -501,6 +495,13 @@ function createContainer(parentQuery = "body", tagName = "div") {
         window.player = await createArtplayer();
 
         initEpsListOnClick(epsListParentQuery, (url) => {
+            notyf.dismissAll();
+
+            notyf.open({
+                type: "info",
+                message: CONFIG.betWarning
+            });
+
             window.container.style.display = ""
             changeUrl(url)
         });
