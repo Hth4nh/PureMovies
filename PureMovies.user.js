@@ -199,8 +199,9 @@ async function convertToBlobURL(_url) {
                     const title = `No ads detected - ${location.hostname}`;
                     const body = [
                         `Version: \`v${CONFIG.version}\``,
+                        `User Agent: \`${navigator.userAgent}\``,
                         `URL: ${location.href}`,
-                        `User Agent: \`${navigator.userAgent}\``
+                        `.m3u8 URL: ${_url}`,
                     ].join("\n");
 
                     window.open(`https://github.com/Hth4nh/PureMovies/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}&labels=bug&assignees=${CONFIG.author}`, "_blank");
@@ -356,7 +357,6 @@ async function createArtplayer(url = "") {
         lock: true,
         fastForward: true,
         playbackRate: true,
-        aspectRatio: true,
         theme: "#ff0057",
         fullscreen: true,
         fullscreenWeb: false,
@@ -364,21 +364,45 @@ async function createArtplayer(url = "") {
         autoOrientation: true,
         airplay: false,
         whitelist: ["*"],
-        lang: "vietnamese",
+        lang: "vi-vn",
         i18n: {
-            "vietnamese": {
+            "vi-vn": {
+                "Video Info": "Thông tin video",
+                "Close": "Đóng",
+                "Video Load Failed": "Tải video thất bại",
+                "Volume": "Âm lượng",
                 "Play": "Phát",
-                "Pause": "Dừng",
+                "Pause": "Tạm dừng",
+                "Rate": "Tốc độ",
+                "Mute": "Tắt tiếng",
+                "Video Flip": "Lật video",
+                "Horizontal": "Ngang",
+                "Vertical": "Dọc",
+                "Reconnect": "Kết nối lại",
                 "Show Setting": "Cài đặt",
-                "PIP Mode": "Phát trong hình",
-                "PIP Not Supported": "Không hỗ trợ phát trong hình",
-                "Fullscreen": "Phóng to",
+                "Hide Setting": "Ẩn cài đặt",
+                "Screenshot": "Chụp màn hình",
                 "Play Speed": "Tốc độ phát",
                 "Aspect Ratio": "Tỷ lệ khung hình",
+                "Default": "Mặc định",
                 "Normal": "Bình thường",
-                "Video Info": "Thông tin Video",
-                "Close": "Đóng",
-                "Default": "Mặc định"
+                "Open": "Mở",
+                "Switch Video": "Chuyển video",
+                "Switch Subtitle": "Chuyển phụ đề",
+                "Fullscreen": "Toàn màn hình",
+                "Exit Fullscreen": "Thoát toàn màn hình",
+                "Web Fullscreen": "Toàn màn hình trình duyệt",
+                "Exit Web Fullscreen": "Thoát toàn màn hình trình duyệt",
+                "Mini Player": "Trình phát mini",
+                "PIP Mode": "Phát trong hình",
+                "Exit PIP Mode": "Thoát phát trong hình",
+                "PIP Not Supported": "Không hỗ trợ phát trong hình",
+                "Fullscreen Not Supported": "Không hỗ trợ toàn màn hình",
+                "Subtitle Offset": "Độ trễ phụ đề",
+                "Last Seen": "Lần xem cuối",
+                "Jump Play": "Nhảy đến đoạn phát",
+                "AirPlay": "Phát qua AirPlay",
+                "AirPlay Not Available": "AirPlay không khả dụng"
             },
         },
         controls: [
@@ -434,6 +458,7 @@ function createContainer(parentQuery = "body", tagName = "div") {
     document.head.insertAdjacentHTML("beforeend", "<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css\">");
     document.head.insertAdjacentHTML("beforeend", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css\">");
     document.head.insertAdjacentHTML("beforeend", "<style>.notyf__toast { max-width: 700px !important; } .notyf__ripple { width: 850px !important; }</style>");
+    document.head.insertAdjacentHTML("beforeend", "<style>.art-controls-left > :first-of-type:after { left: 100%; } .art-controls-right > :last-of-type:after { left: 0%; }</style>");
 
     // Disable Hls
     unsafeWindow.Hls = new Proxy(class {}, {
@@ -495,8 +520,11 @@ function createContainer(parentQuery = "body", tagName = "div") {
         window.player = await createArtplayer();
 
         initEpsListOnClick(epsListParentQuery, (url) => {
-            notyf.dismissAll();
+            if (window.player.controls.noadserror) {
+                window.player.controls.remove("noadserror")
+            }
 
+            notyf.dismissAll();
             notyf.open({
                 type: "info",
                 message: CONFIG.betWarning
