@@ -68,10 +68,6 @@ URL.parse ??= (url, base) => {
     }
 };
 
-window.GM_addValueChangeListener ??= () => {}
-window.GM_setValue ??= () => {}
-window.GM_getValue ??= () => false
-
 const notyf = new Notyf({
     duration: 7000,
     dismissible: true,
@@ -485,7 +481,7 @@ function createContainer(parentQuery = "body", tagName = "div") {
     document.querySelector("footer .pt-2.justify-between.sm\\:flex")?.insertAdjacentHTML("beforebegin", "<img class=\"pt-2\" src=\"//images.dmca.com/Badges/dmca-badge-w150-5x1-01.png\">")
 
     // Debug detect
-    GM_addValueChangeListener("DEBUG", (key, oldValue, newValue, remote) => {
+    GM_addValueChangeListener?.("DEBUG", (key, oldValue, newValue, remote) => {
         CONFIG.debug = newValue;
 
         replaceLogo();
