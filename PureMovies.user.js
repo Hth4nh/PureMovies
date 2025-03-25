@@ -49,19 +49,27 @@ const CONFIG = {
     flash: false,
 
     customCss: `
-        .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom :is(.art-controls, .art-progress) {
-            transform: translateY(calc(2 * var(--art-control-height) + var(--art-bottom-gap) + var(--art-progress-height)/4));
+        .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom .art-controls {
+            transform: none;
+            max-height: 0;
+            margin-top: calc(-1 * var(--art-bottom-gap));
+        }
+
+        .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom .art-progress {
+            transform: translateY(0);
         }
 
         .art-controls,
         .art-controls .art-controls-left,
         .art-controls .art-controls-right {
             height: initial;
+            max-height: 150%;
         }
 
-        .art-controls {
+        .art-video-player .art-bottom .art-controls {
             flex-wrap: wrap;
             margin-top: 10px;
+            transition-property: all;
         }
 
         .art-controls > * {
