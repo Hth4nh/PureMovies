@@ -49,34 +49,33 @@ const CONFIG = {
     flash: false,
 
     customCss: `
-        @media (max-width: 768px) {
-            .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom :is(.art-controls, .art-progress) {
-                transform: translateY(calc(2 * var(--art-control-height) + var(--art-bottom-gap) + var(--art-progress-height)/4));
-            }
+        .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom :is(.art-controls, .art-progress) {
+            transform: translateY(calc(2 * var(--art-control-height) + var(--art-bottom-gap) + var(--art-progress-height)/4));
+        }
 
-            .art-video-player:is(.art-control-show, .art-hover) .art-bottom :is(.art-controls, .art-progress) {
-                transform: translateY(10px);
-            }
+        .art-controls,
+        .art-controls .art-controls-left,
+        .art-controls .art-controls-right {
+            height: initial;
+        }
 
-            .art-controls,
-            .art-controls .art-controls-left,
-            .art-controls .art-controls-right {
-                height: initial;
-            }
+        .art-controls {
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
 
-            .art-controls {
-                flex-wrap: wrap;
-            }
+        .art-controls > * {
+            margin-top: -10px;
+        }
 
-            .art-controls-right {
-                margin-left: auto;
-                translate: 0 -10px;
-            }
+        .art-controls-right {
+            margin-left: auto;
         }
 
         .art-controls-left > :first-of-type:after {
             left: 100%;
         }
+
         .art-controls-right > :last-of-type:after {
             left: 0%;
         }
