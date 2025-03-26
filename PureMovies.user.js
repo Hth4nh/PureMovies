@@ -40,7 +40,12 @@
 
 try {
     GM_info.script.grant.forEach(grant => {
-        eval(grant)
+        try {
+            eval(grant)
+        }
+        catch(e) {
+            console.warn(e)
+        }
     });
 }
 catch(e) {
