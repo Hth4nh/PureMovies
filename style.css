@@ -1,46 +1,46 @@
 .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom .art-controls {
-    transform: none;
-    max-height: 0;
-    margin-top: calc(-1 * var(--art-bottom-gap));
+    transform: none !important;
+    max-height: 0 !important;
+    margin-top: calc(-1 * var(--art-bottom-gap)) !important;
 }
 
 .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom .art-progress {
-    transform: translateY(0);
+    transform: translateY(0) !important;
 }
 
 .art-controls,
 .art-controls .art-controls-left,
 .art-controls .art-controls-right {
     height: initial;
-    max-height: 150%;
+    max-height: 150% !important;
 }
 
 .art-video-player .art-bottom .art-controls {
-    flex-wrap: wrap;
-    margin-top: 10px;
-    transition-property: all;
+    flex-wrap: wrap !important;
+    margin-top: 10px !important;
+    transition-property: all !important;
 }
 
 .art-controls > * {
-    margin-top: -10px;
+    margin-top: -10px !important;
 }
 
 .art-controls-right {
-    margin-left: auto;
+    margin-left: auto !important;
 }
 
 .art-controls-left > :first-of-type:after {
-    left: 100%;
+    left: 100% !important;
 }
 
 .art-controls-right > :last-of-type:after {
-    left: 0%;
+    left: 0% !important;
 }
 
 .notyf__toast {
-    max-width: 700px;
+    max-width: 700px !important;
 }
 
 .notyf__ripple {
-    width: 850px;
+    width: 850px !important;
 }
