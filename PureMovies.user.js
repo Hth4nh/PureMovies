@@ -38,6 +38,15 @@
 
 /* global Artplayer, Hls, Notyf, url */
 
+try {
+    GM_info.script.grant.forEach(grant => {
+        eval(grant)
+    });
+}
+catch(e) {
+    console.warn(e)
+}
+
 const CONFIG = {
     name: "Cuki's PureMovie",
     version: "1.2.5.4",
@@ -107,14 +116,6 @@ const CONFIG = {
         }
     `
 }
-
-CONFIG.grant.forEach(grant => {
-    try {
-        eval(grant)
-    } catch (e) {
-        console.log(e)
-    }
-});
 
 try {
     window.url = url;
