@@ -37,8 +37,8 @@
 // @require          https://cdn.jsdelivr.net/npm/hls.js
 // @require          https://cdn.jsdelivr.net/npm/artplayer
 // @require          https://cdn.jsdelivr.net/npm/notyf
-// @resource         customCss           https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/style.css
-// @resource         customLogo          https://github.com/Hth4nh/PureMovies/raw/refs/heads/main/logo.png
+// @resource         customCss           https://cdn.jsdelivr.net/gh/Hth4nh/PureMovies/style.css
+// @resource         customLogo          https://cdn.jsdelivr.net/gh/Hth4nh/PureMovies/logo.png
 // @run-at           document-start
 // @connect          phim1280.tv
 // @connect          streamc.xyz
@@ -60,8 +60,6 @@ function GM_getResourceURL(name, isBlobUrl = true) {
     if (!GM.info?.script?.resources) {
         throw new Error('GM.info.resources is not available');
     }
-
-    console.log(GM.info.script.resources);
 
     const resource = GM.info.script.resources.find(res => res.name === name);
     if (!resource?.content || !resource?.meta) {
@@ -135,17 +133,12 @@ async function init() {
 
     // Init config
     window.config = {
-        logoURL: GM_getResourceURL("customLogo", false),
+        logoURL: await GM.getResourceUrl("customLogo"),
         betWarning: "Hành vi cá cược, cờ bạc online <b>LÀ VI PHẠM PHÁP LUẬT</b><br>theo Điều 321 Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017)",
 
-        debug: false,
+        debug: await GM.getValue("DEBUG", false),
         flash: false,
     };
-
-    // Init debug state
-    GM.getValue("DEBUG", false).then(val => {
-        window.config.debug = val
-    });
 
     // Debug toggle detect (only work with GM 3 API)
     try {
@@ -661,12 +654,12 @@ function injectPlayer() {
     });
 }
 
-function domInit() {
+async function domInit() {
     // Replace logo
     replaceLogo();
 
     // Inject custom CSS
-    document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="${GM_getResourceURL("customCss")}">`);
+    document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="${await GM.getResourceUrl("customCss")}">`);
 
     // Init notyf
     window.notyf = new Notyf({
@@ -723,10 +716,10 @@ function domInit() {
     );
 };
 
-(function main() {
+(async function main() {
     // document.write("<html></html>");
     // return;
-    init();
+    await init();
 
     if (document.body) {
         replaceLogo();
