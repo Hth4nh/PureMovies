@@ -692,7 +692,7 @@ async function domInit() {
     }
     else {
         document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
-        detectEpisodeList("#content, .container", "#list_episode > div:nth-child(2), .mt-0 > div[id^=headlessui-disclosure-panel] > div");
+        detectEpisodeList(".container:not(#content), #content", "#list_episode > div:nth-child(2), .mt-0 > div[id^=headlessui-disclosure-panel] > div");
     }
     // else if ((location.hostname.includes("kkphim") || location.hostname.includes("nguonc") || location.hostname === "216.180.226.222") && location.pathname.startsWith("/phim/")) {
     //     document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
