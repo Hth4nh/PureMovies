@@ -61,6 +61,8 @@ function GM_getResourceURL(name, isBlobUrl = true) {
         throw new Error('GM.info.resources is not available');
     }
 
+    console.log(GM.info.script.resources);
+
     const resource = GM.info.script.resources.find(res => res.name === name);
     if (!resource?.content || !resource?.meta) {
         throw new Error('Resource not found or missing required properties: ' + name);
