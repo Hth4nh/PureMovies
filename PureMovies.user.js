@@ -120,7 +120,7 @@ async function init() {
             "unsafeWindows",
         ],
 
-        ...GM_info.script,
+        ...GM.info.script,
     }
 
     // Debug: console.warn if grant is not available
