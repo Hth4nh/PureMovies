@@ -105,6 +105,7 @@ async function init() {
             "GM.xmlHttpRequest",
             "GM.registerMenuCommand",
             "unsafeWindows",
+            "GM_addValueChangeListener",
         ],
 
         ...GM.info.script,
@@ -193,12 +194,6 @@ async function init() {
             }
         });
     });
-
-    // Inject CSS
-    document.head.insertAdjacentHTML("beforeend", `<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">`);
-    document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css">`);
-    document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css">`);
-    document.head.insertAdjacentHTML("beforeend", "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css\">");
 }
 
 function createLogo(img = document.createElement("img")) {
@@ -279,7 +274,7 @@ async function convertToBlobURL(_url) {
                 name: "noadserror",
                 index: 2,
                 position: "right",
-                html: "<i class=\"fa-solid fa-triangle-exclamation fa-lg\"></i>",
+                html: `<i class="fa-solid fa-triangle-exclamation fa-lg"></i>`,
                 tooltip: "Không tìm thấy quảng cáo - Bấm để báo cáo lỗi",
                 style: {
                     color: "#FFCC00",
@@ -301,11 +296,9 @@ async function convertToBlobURL(_url) {
     }
 
     // Convert the content to blob URL and cache it
-    // window.blobURLMap[url.href] = URL.createObjectURL(new Blob([res], {
-    //     type: "application/vnd.apple.mpegurl"
-    // }));
-
-    window.blobURLMap[url.href] = `data:application/vnd.apple.mpegurl;base64,${btoa(res)}`;
+    window.blobURLMap[url.href] = URL.createObjectURL(new Blob([res], {
+        type: "application/vnd.apple.mpegurl"
+    }));
 
     return window.blobURLMap[url.href];
 }
@@ -507,7 +500,7 @@ function createArtplayer(url = "") {
                 position: "left",
                 name: "fast-rewind",
                 index: 10,
-                html: "<i class=\"fa-solid fa-backward fa-lg\"></i>",
+                html: `<i class="fa-solid fa-backward fa-lg"></i>`,
                 tooltip: "10 giây trước",
                 click: function () {
                     window.player.seek = this.currentTime - 10
@@ -517,7 +510,7 @@ function createArtplayer(url = "") {
                 position: "left",
                 name: "fast-forward",
                 index: 11,
-                html: "<i class=\"fa-solid fa-forward fa-lg\"></i>",
+                html: `<i class="fa-solid fa-forward fa-lg"></i>`,
                 tooltip: "10 giây sau",
                 click: function () {
                     window.player.seek = this.currentTime + 10
@@ -585,6 +578,12 @@ function injectPlayer() {
 async function domInit() {
     // Replace logo
     replaceLogo();
+
+    // Inject CSS
+    document.head.insertAdjacentHTML("beforeend", `<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/webfonts/fa-solid-900.woff2" as="font" type="font/woff2" crossorigin="anonymous">`);
+    document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css">`);
+    document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css">`);
+    document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">`);
 
     // Inject custom CSS
     document.head.insertAdjacentHTML("beforeend", `<link rel="stylesheet" href="${await GM.getResourceUrl("customCss")}">`);
