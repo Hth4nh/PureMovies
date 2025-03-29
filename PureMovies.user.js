@@ -308,9 +308,11 @@ async function convertToBlobURL(_url) {
     }
 
     // Convert the content to blob URL and cache it
-    window.blobURLMap[url.href] = URL.createObjectURL(new Blob([res], {
-        type: "application/vnd.apple.mpegurl"
-    }));
+    // window.blobURLMap[url.href] = URL.createObjectURL(new Blob([res], {
+    //     type: "application/vnd.apple.mpegurl"
+    // }));
+
+    window.blobURLMap[url.href] = `data:application/vnd.apple.mpegurl;base64,${btoa(res)}`;
 
     return window.blobURLMap[url.href];
 }
