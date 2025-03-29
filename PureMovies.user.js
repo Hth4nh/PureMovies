@@ -37,6 +37,7 @@
 // @require          https://cdn.jsdelivr.net/npm/hls.js
 // @require          https://cdn.jsdelivr.net/npm/artplayer
 // @require          https://cdn.jsdelivr.net/npm/notyf
+// @require          https://cdn.jsdelivr.net/npm/@trim21/gm-fetch
 // @resource         customCss           https://cdn.jsdelivr.net/gh/Hth4nh/PureMovies/style.css
 // @resource         customLogo          https://cdn.jsdelivr.net/gh/Hth4nh/PureMovies/logo.png
 // @run-at           document-start
@@ -54,57 +55,45 @@
 // @connect          *
 // ==/UserScript==
 
-/* global Artplayer, Hls, Notyf, url */
+/* global Artplayer, GM_fetch, Hls, Notyf, url */
+GM.fetch ??= GM_fetch;
 
-function GM_getResourceURL(name, isBlobUrl = true) {
-    if (!GM.info?.script?.resources) {
-        throw new Error('GM.info.resources is not available');
-    }
+async function convertToDataUrl(url) {
+    const response = await fetch(url);
+    const blob = await response.blob();
 
-    const resource = GM.info.script.resources.find(res => res.name === name);
-    if (!resource?.content || !resource?.meta) {
-        throw new Error('Resource not found or missing required properties: ' + name);
-    }
-
-    if (isBlobUrl) {
-        const blob = new Blob([resource.content], { type: resource.meta });
-        return URL.createObjectURL(blob);
-    }
-    else {
-        return `data:${resource.meta};base64,${btoa(resource.content)}`;
-    }
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(blob);
+    });
 }
 
-GM.fetch ??= function(url, options = {}) {
-    return new Promise((resolve, reject) => {
-        GM.xmlHttpRequest({
-            method: options.method || "GET",
-            url: url,
-            headers: options.headers || {},
-            responseType: "arraybuffer",
-            onload: function(response) {
-                let headers = new Headers();
-                response.responseHeaders.split("\r\n").forEach(line => {
-                    let [key, ...value] = line.split(": ");
-                    if (key && value.length) {
-                        headers.append(key.trim(), value.join(": ").trim());
-                    }
-                });
-
-                resolve(new Response(response.response, {
-                    status: response.status,
-                    statusText: response.statusText,
-                    headers: headers
-                }));
-            },
-            onerror: function(error) {
-                reject(error);
-            }
-        });
-    });
-};
-
 async function init() {
+    // Bypass referer and CORS
+    window._fetch = window.fetch;
+    window.fetch = async function(input, options = {}) {
+        if (input instanceof Request) {
+            options = {
+                method: input.method,
+                headers: {
+                    ...Object.fromEntries(input.headers.entries()),
+                    Referer: "https://streamc.xyz"
+                },
+                body: input.body,
+                ...options,
+            };
+
+            input = input.url;
+        }
+
+        if (input.protocol === "blob:" || input.protocol === "data:" || input.startsWith?.("blob:") || input.startsWith?.("data:")) {
+            return window._fetch(input, options);
+        }
+
+        return GM.fetch(input, options);
+    };
+
     // Init info
     window.info = {
         author: "Thành Hoàng Trần (@hth4nh) và Team Cuki's Pirate",
@@ -133,7 +122,7 @@ async function init() {
 
     // Init config
     window.config = {
-        logoURL: await GM.getResourceUrl("customLogo"),
+        logoURL: await GM.getResourceUrl("customLogo").then(convertToDataUrl),
         betWarning: "Hành vi cá cược, cờ bạc online <b>LÀ VI PHẠM PHÁP LUẬT</b><br>theo Điều 321 Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017)",
 
         debug: await GM.getValue("DEBUG", false),
@@ -247,7 +236,7 @@ async function convertToBlobURL(_url) {
     }
 
     // Fetch the content of the URL
-    let req = await GM.fetch(url);
+    let req = await fetch(url);
     let res = await req.text();
 
     // Adjust relative paths in the playlist by converting them to absolute URLs
@@ -325,7 +314,7 @@ async function getM3u8URL(_url) {
     }
 
     if (url.hostname.includes("opstream") /* || url.hostname.includes("player.phimapi")*/) {
-        const req = await GM.fetch(url);
+        const req = await fetch(url);
         const raw = await req.text();
 
         const newUrl = raw.match(/(?<=const url = ").*(?=";)/)?.[0];
@@ -339,77 +328,6 @@ async function getM3u8URL(_url) {
     return url.href;
 }
 
-class HLSLoader extends Hls.DefaultConfig.loader {
-    constructor(config) {
-        super(config);
-        this.request = null;
-    }
-
-    load(context, config, callbacks) {
-        const { url, responseType } = context;
-        const { onSuccess, onError, onProgress, onTimeout } = callbacks;
-
-        console.log("Intercepting request:", url);
-
-        let headers = {
-            "Accept": "*/*",
-            "Cache-Control": "no-cache",
-        };
-
-        if (this.xhrSetup) {
-            try {
-                this.xhrSetup({
-                    setRequestHeader: (key, value) => {
-                        headers[key] = value;
-                    }
-                }, url);
-            } catch (e) {
-                console.warn("xhrSetup error:", e);
-            }
-        }
-
-        let startTime = performance.now();
-
-        this.request = GM.xmlHttpRequest({
-            method: "GET",
-            url: url,
-            responseType: responseType || "arraybuffer",
-            headers: headers,
-            timeout: config.timeout || 30000,
-
-            // Xử lý khi request thành công
-            onload: (response) => {
-                let endTime = performance.now();
-                const stats = {
-                    aborted: false,
-                    loaded: response.response.byteLength || response.response.length,
-                    total: response.response.byteLength || response.response.length,
-                    retry: 0,
-                    chunkCount: 0,
-                    bwEstimate: (response.response.byteLength * 8) / ((endTime - startTime) / 1000),
-                    loading: { start: startTime, first: startTime, end: endTime },
-                    parsing: { start: 0, end: 0 },
-                    buffering: { start: 0, first: 0, end: 0 }
-                };
-
-                onSuccess({
-                    url: response.url,
-                    data: response.response
-                }, stats, context);
-            },
-
-            // Xử lý khi có lỗi xảy ra
-            onerror: (error) => {
-                onError({ code: error.status || 0, text: error.statusText || "Unknown Error" }, context, error);
-            },
-        });
-    }
-
-    abort() {
-        this.request?.abort();
-    }
-}
-
 async function changeUrl(_url) {
     window.player?.destroy();
     window.player = createArtplayer();
@@ -417,13 +335,17 @@ async function changeUrl(_url) {
     let url = await getM3u8URL(_url);
     let blobUrl = await convertToBlobURL(url);
 
-
     // Change url
     if (Hls.isSupported()) {
         const hls = new Hls({
-            loader: HLSLoader,
-            xhrSetup: function(xhr) {
-                xhr.setRequestHeader("Referer", _url);
+            progressive: true,
+            fetchSetup: function (context, initParams) {
+                //console.log(...arguments)
+                initParams.headers.set("Referer", _url);
+                return new Request(context.url, {
+                    ...initParams,
+                    //_headers: initParams.headers
+                })
             },
         });
 
@@ -690,9 +612,16 @@ async function domInit() {
     if (keywords.some(keyword => location.hostname.includes(keyword))) {
         replacePlayer();
     }
+    else if (location.hostname.includes("nguonc")) {
+        document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
+        detectEpisodeList("#content", "#list_episode > div:nth-child(2)");
+    }
+    else if (location.hostname.includes("ophim")) {
+        detectEpisodeList(".container", ".mt-0 > div[id^=headlessui-disclosure-panel] > div");
+    }
     else {
         document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
-        detectEpisodeList(".container:not(#content), #content", "#list_episode > div:nth-child(2), .mt-0 > div[id^=headlessui-disclosure-panel] > div");
+        detectEpisodeList("#content > div", "#list_episode > div:nth-child(2)");
     }
     // else if ((location.hostname.includes("kkphim") || location.hostname.includes("nguonc") || location.hostname === "216.180.226.222") && location.pathname.startsWith("/phim/")) {
     //     document.querySelectorAll("#list_episode ~ * > button").forEach(elem => elem.click());
