@@ -122,7 +122,7 @@ async function init() {
 
     // Init config
     window.config = {
-        logoURL: await GM.getResourceUrl("customLogo").then(convertToDataUrl),
+        logoURL: await GM.getValue("logoURL", ""),
         betWarning: "Hành vi cá cược, cờ bạc online <b>LÀ VI PHẠM PHÁP LUẬT</b><br>theo Điều 321 Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017)",
 
         debug: await GM.getValue("DEBUG", false),
@@ -213,7 +213,11 @@ function createLogo(img = document.createElement("img")) {
     return img;
 }
 
-function replaceLogo() {
+async function replaceLogo() {
+    if (!window.config.logoURL) {
+        window.config.logoURL = await GM.getResourceUrl("customLogo").then(convertToDataUrl);
+        GM.setValue("logoURL", window.config.logoURL);
+    }
     window.imgParent ??= document.querySelector(".mr-3.flex-none.overflow-hidden.w-auto > span > a");
     if (window.imgParent) {
         window.imgParent.parentElement.parentElement.classList.remove("overflow-hidden");
