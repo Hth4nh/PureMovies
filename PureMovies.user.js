@@ -653,7 +653,7 @@ async function domInit() {
 (async function main() {
     // document.write("<html></html>");
     // return;
-    await init();
+    let initPromise = init();
 
     if (document.body) {
         replaceLogo();
@@ -667,5 +667,5 @@ async function domInit() {
         }).observe(document, { childList: true, subtree: true });
     }
 
-    document.addEventListener('DOMContentLoaded', domInit);
+    document.addEventListener('DOMContentLoaded', () => initPromise.then(domInit));
 })();
