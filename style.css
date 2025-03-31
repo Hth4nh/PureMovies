@@ -1,3 +1,11 @@
+.debug .mr-3.flex-none.overflow-hidden.w-auto > span > a > img {
+    transform: rotate(180deg) scaleY(-1) scaleX(-1);
+    filter: invert(1);
+}
+
+
+
+
 .mr-3.flex-none.overflow-hidden.w-auto > span > a > img {
     height: 40px !important;
     width: initial !important;
@@ -8,6 +16,8 @@
 .mr-3.flex-none.overflow-hidden.w-auto {
     overflow: initial !important;
 }
+
+
 
 
 
