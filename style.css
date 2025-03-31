@@ -1,3 +1,26 @@
+.mr-3.flex-none.overflow-hidden.w-auto > span > a > img {
+    height: 40px !important;
+    width: initial !important;
+    padding: 0 10px !important;
+    transition: 0.5s !important;
+}
+
+.mr-3.flex-none.overflow-hidden.w-auto {
+    overflow: initial !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 .art-video-player:is(.art-mini-progress-bar, .art-lock) .art-bottom .art-controls {
     transform: none !important;
     max-height: 0 !important;
