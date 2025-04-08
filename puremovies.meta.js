@@ -40,9 +40,9 @@
 // @connect                opstream17.com
 // @connect                opstream90.com
 // @connect                *
-// @grant                  GM.info
 // @grant                  GM.xmlHttpRequest
 // @grant                  GM_addStyle
+// @grant                  GM_info
 // @grant                  unsafeWindow
 // @run-at                 document-start
 // ==/UserScript==

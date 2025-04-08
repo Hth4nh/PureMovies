@@ -40,9 +40,9 @@
 // @connect                opstream17.com
 // @connect                opstream90.com
 // @connect                *
-// @grant                  GM.info
 // @grant                  GM.xmlHttpRequest
 // @grant                  GM_addStyle
+// @grant                  GM_info
 // @grant                  unsafeWindow
 // @run-at                 document-start
 // ==/UserScript==
@@ -55,7 +55,7 @@
   function isHostnameContains(...keywords) {
     return keywords.some((keyword) => location.hostname.includes(keyword));
   }
-  var _GM = /* @__PURE__ */ (() => typeof GM != "undefined" ? GM : void 0)();
+  var _GM_info = /* @__PURE__ */ (() => typeof GM_info != "undefined" ? GM_info : void 0)();
   var _unsafeWindow = /* @__PURE__ */ (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   async function unrestrictedFetch(input, options = {}) {
     if (typeof input === "string") {
@@ -122,7 +122,7 @@
   }
   const infoIconURL = "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20512%20512'%3e%3c!--!Font%20Awesome%20Free%206.7.2%20by%20@fontawesome%20-%20https://fontawesome.com%20License%20-%20https://fontawesome.com/license/free%20Copyright%202025%20Fonticons,%20Inc.--%3e%3cpath%20d='M256%20512A256%20256%200%201%200%20256%200a256%20256%200%201%200%200%20512zM216%20336l24%200%200-64-24%200c-13.3%200-24-10.7-24-24s10.7-24%2024-24l48%200c13.3%200%2024%2010.7%2024%2024l0%2088%208%200c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024l-80%200c-13.3%200-24-10.7-24-24s10.7-24%2024-24zm40-208a32%2032%200%201%201%200%2064%2032%2032%200%201%201%200-64z'/%3e%3c/svg%3e";
   const config = {
-    ..._GM.info.script,
+    ..._GM_info.script,
     betWarning: "Hành vi cá cược, cờ bạc online <b>LÀ VI PHẠM PHÁP LUẬT</b><br>theo Điều 321 Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017)",
     adsRegexList: [
       new RegExp("(?<!#EXT-X-DISCONTINUITY[\\s\\S]*)#EXT-X-DISCONTINUITY\\n(?:.*?\\n){20}#EXT-X-DISCONTINUITY\\n(?![\\s\\S]*#EXT-X-DISCONTINUITY)", "g"),
