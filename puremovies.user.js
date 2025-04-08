@@ -3,6 +3,7 @@
 // @namespace              Hth4nh
 // @version                2.0
 // @author                 Hth4nh
+// @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://www.google.com/s2/favicons?sz=64&domain=kkphim.com
 // @homepageURL            https://github.com/Hth4nh/PureMovies
 // @downloadURL            https://hth4nh.github.io/PureMovies/puremovies.user.js
@@ -196,6 +197,19 @@
     parent.append(playerContainer);
     return playerContainer;
   }
+  async function remoteImport(scriptURL) {
+    try {
+      scriptURL = new URL(scriptURL);
+      const response = await fetch(scriptURL);
+      if (!response.ok) {
+        throw new Error(`Failed to load script: ${scriptURL.href}`);
+      }
+      const scriptContent = (await response.text()).split("\n").filter((line) => !line.startsWith("//")).join("\n").replaceAll("console.log", "(()=>{})");
+      eval(scriptContent);
+    } catch (error) {
+      console.error(error);
+    }
+  }
   const originalFetch = window.fetch;
   window.fetch = function(...args) {
     var _a, _b;
@@ -210,6 +224,12 @@
     instances.player = createPlayer();
     let playlistUrl = await getPlaylistURL(embedUrl);
     playlistUrl = await removeAds(playlistUrl);
+    try {
+      if (!Hls) throw "";
+    } catch (e) {
+      console.warn("Hls not found. Run workaround...");
+      await remoteImport("https://cdn.jsdelivr.net/npm/hls.js");
+    }
     if (Hls.isSupported()) {
       const hls = new Hls({
         progressive: true,
@@ -638,4 +658,4 @@
     detectEpisodeList("#content > div", "#list_episode > div:nth-child(2)");
   }
 
-})(GM_fetch, {Notyf}, Hls, Artplayer);
+})(GM_fetch, {Notyf}, (() => {try { return Hls } catch(e) { return null }})(), (() => {try { return Artplayer } catch(e) { return null }})());
