@@ -44,7 +44,6 @@
 // @grant                  GM.xmlHttpRequest
 // @grant                  GM_addStyle
 // @grant                  GM_info
-// @grant                  unsafeWindow
 // @run-at                 document-start
 // ==/UserScript==
 
@@ -56,8 +55,6 @@
   function isHostnameContains(...keywords) {
     return keywords.some((keyword) => location.hostname.includes(keyword));
   }
-  var _GM_info = /* @__PURE__ */ (() => typeof GM_info != "undefined" ? GM_info : void 0)();
-  var _unsafeWindow = /* @__PURE__ */ (() => typeof unsafeWindow != "undefined" ? unsafeWindow : void 0)();
   async function remoteImport(scriptURL, scriptOutputVariableName) {
     try {
       scriptURL = new URL(scriptURL);
@@ -90,6 +87,7 @@
   }
   const infoIconURL = "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20512%20512'%3e%3c!--!Font%20Awesome%20Free%206.7.2%20by%20@fontawesome%20-%20https://fontawesome.com%20License%20-%20https://fontawesome.com/license/free%20Copyright%202025%20Fonticons,%20Inc.--%3e%3cpath%20d='M256%20512A256%20256%200%201%200%20256%200a256%20256%200%201%200%200%20512zM216%20336l24%200%200-64-24%200c-13.3%200-24-10.7-24-24s10.7-24%2024-24l48%200c13.3%200%2024%2010.7%2024%2024l0%2088%208%200c13.3%200%2024%2010.7%2024%2024s-10.7%2024-24%2024l-80%200c-13.3%200-24-10.7-24-24s10.7-24%2024-24zm40-208a32%2032%200%201%201%200%2064%2032%2032%200%201%201%200-64z'/%3e%3c/svg%3e";
   const warningIconURL = "data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20512%20512'%3e%3c!--!Font%20Awesome%20Free%206.7.2%20by%20@fontawesome%20-%20https://fontawesome.com%20License%20-%20https://fontawesome.com/license/free%20Copyright%202025%20Fonticons,%20Inc.--%3e%3cpath%20d='M256%2032c14.2%200%2027.3%207.5%2034.5%2019.8l216%20368c7.3%2012.4%207.3%2027.7%20.2%2040.1S486.3%20480%20472%20480L40%20480c-14.3%200-27.6-7.7-34.7-20.1s-7-27.8%20.2-40.1l216-368C228.7%2039.5%20241.8%2032%20256%2032zm0%20128c-13.3%200-24%2010.7-24%2024l0%20112c0%2013.3%2010.7%2024%2024%2024s24-10.7%2024-24l0-112c0-13.3-10.7-24-24-24zm32%20224a32%2032%200%201%200%20-64%200%2032%2032%200%201%200%2064%200z'/%3e%3c/svg%3e";
+  var _GM_info = /* @__PURE__ */ (() => typeof GM_info != "undefined" ? GM_info : void 0)();
   const config = {
     ..._GM_info.script,
     betWarning: "Hành vi cá cược, cờ bạc online <b>LÀ VI PHẠM PHÁP LUẬT</b><br>theo Điều 321 Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017)",
@@ -378,7 +376,7 @@
       return embedUrl2.searchParams.get("url") ?? "";
     }
     if (embedUrl2.hostname.includes("opstream")) {
-      const req = await unrestrictedFetch(embedUrl2);
+      const req = await fetch(embedUrl2);
       const raw = await req.text();
       const playlistUrl2 = (_a = raw.match(new RegExp('(?<=const url = ").*(?=";)'))) == null ? void 0 : _a[0];
       return ((_b = URL.parse(String(playlistUrl2), embedUrl2)) == null ? void 0 : _b.href) || "";
@@ -645,27 +643,12 @@
   }
   async function unrestrictedFetch(input, options = {}) {
     var _a;
-    try {
-      if (!GM_fetch) throw "";
-    } catch (e) {
-      console.warn("GM_fetch not found. Run workaround...");
-      instances.notification ?? (instances.notification = await createNotification());
-      (_a = instances.notification) == null ? void 0 : _a.open({
-        type: "warning",
-        message: "GM_fetch not found. Run workaround..."
-      });
-      window.tmp = await remoteImport(
-        "https://cdn.jsdelivr.net/npm/@trim21/gm-fetch",
-        "GM_fetch"
-      );
-      eval("GM_fetch = window.tmp;");
-    }
     if (typeof input === "string") {
       input = new URL(input);
     }
     const protocol = input instanceof Request ? new URL(input.url).protocol : input.protocol;
     if (protocol === "blob:" || protocol === "data:") {
-      return _unsafeWindow.fetch(input, options);
+      return fetch(input, options);
     }
     const rawUrlString = input instanceof Request ? input.url : input.href;
     const [requestUrl, kodiHeaderString = ""] = rawUrlString.split("|", 2);
@@ -700,6 +683,21 @@
       ...kodiStyleHeaders,
       ...options.headers
     };
+    try {
+      if (!GM_fetch) throw "";
+    } catch (e) {
+      console.warn("GM_fetch not found. Run workaround...");
+      instances.notification ?? (instances.notification = await createNotification());
+      (_a = instances.notification) == null ? void 0 : _a.open({
+        type: "warning",
+        message: "GM_fetch not found. Run workaround..."
+      });
+      window.tmp = await remoteImport(
+        "https://cdn.jsdelivr.net/npm/@trim21/gm-fetch",
+        "GM_fetch"
+      );
+      eval("GM_fetch = window.tmp;");
+    }
     return GM_fetch(requestUrl, {
       ...baseOptions,
       ...options,
