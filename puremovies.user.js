@@ -181,12 +181,22 @@
     return playerContainer;
   }
   const originalFetch = window.fetch;
-  window.fetch = function(...args) {
-    var _a, _b;
-    if (((_a = new Error().stack) == null ? void 0 : _a.includes("loadSource")) || ((_b = new Error().stack) == null ? void 0 : _b.includes("loadFragment"))) {
-      return unrestrictedFetch(...args);
+  window.fetch = function(input2, init) {
+    const url = input2.url ?? input2.href ?? input2;
+    const hostname = new URL(url).hostname;
+    const isNeedToBypass = ["phim1280", "opstream"].every(
+      (keyword) => hostname.includes(keyword) === false
+    );
+    const isUsingByHls = ["loadSource", "loadFragment"].some(
+      (functionName) => {
+        var _a;
+        return (_a = new Error().stack) == null ? void 0 : _a.includes(functionName);
+      }
+    );
+    if (isNeedToBypass && isUsingByHls) {
+      return unrestrictedFetch(input2, init);
     }
-    return originalFetch(...args);
+    return originalFetch(input2, init);
   };
   async function changePlayerURL(embedUrl) {
     var _a, _b;
@@ -392,7 +402,10 @@
     if (caches.blob[playlistUrl2.href]) {
       return caches.blob[playlistUrl2.href];
     }
-    let req = await unrestrictedFetch(playlistUrl2, {
+    const isNoNeedToBypass = ["phim1280", "opstream"].some(
+      (keyword) => playlistUrl2.hostname.includes(keyword)
+    );
+    let req = isNoNeedToBypass ? await fetch(playlistUrl2) : await unrestrictedFetch(playlistUrl2, {
       headers: {
         Referer: playlistUrl2.origin
       }
