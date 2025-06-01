@@ -30,6 +30,16 @@
 // @require                https://cdn.jsdelivr.net/npm/notyf@3.10.0
 // @require                https://cdn.jsdelivr.net/npm/artplayer@5.2.2
 // @connect                phim1280.tv
+// @connect                kkphimplayer.com
+// @connect                kkphimplayer1.com
+// @connect                kkphimplayer2.com
+// @connect                kkphimplayer3.com
+// @connect                kkphimplayer4.com
+// @connect                kkphimplayer5.com
+// @connect                kkphimplayer6.com
+// @connect                kkphimplayer7.com
+// @connect                kkphimplayer8.com
+// @connect                kkphimplayer9.com
 // @connect                streamc.xyz
 // @connect                opstream10.com
 // @connect                opstream11.com
