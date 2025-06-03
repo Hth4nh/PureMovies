@@ -383,19 +383,20 @@
   async function getPlaylistURL(embedUrl2) {
     var _a, _b;
     embedUrl2 = new URL(embedUrl2);
-    if (embedUrl2.hostname.includes("phimapi")) {
+    if (embedUrl2.hostname.includes("phimapi") && embedUrl2.searchParams.has("url")) {
       return embedUrl2.searchParams.get("url") ?? "";
     }
-    if (embedUrl2.hostname.includes("opstream")) {
-      const req = await fetch(embedUrl2);
-      const raw = await req.text();
-      const playlistUrl2 = (_a = raw.match(new RegExp('(?<=const url = ").*(?=";)'))) == null ? void 0 : _a[0];
-      return ((_b = URL.parse(String(playlistUrl2), embedUrl2)) == null ? void 0 : _b.href) || "";
-    }
-    if (embedUrl2.hostname.includes("streamc")) {
-      return embedUrl2.toString().replace("embed.php", "get.php");
-    }
-    return embedUrl2.href;
+    const isNoNeedToBypass = config.domainBypassWhitelist.some(
+      (keyword) => embedUrl2.hostname.includes(keyword)
+    );
+    const req = isNoNeedToBypass ? await fetch(embedUrl2) : await unrestrictedFetch(embedUrl2, {
+      headers: {
+        Referer: embedUrl2.origin
+      }
+    });
+    const raw = await req.text();
+    const playlistUrl2 = (_a = raw.match(new RegExp('(?<=(?:url =|file:) ").*(?="(?:;|,))'))) == null ? void 0 : _a[0];
+    return ((_b = URL.parse(String(playlistUrl2), embedUrl2)) == null ? void 0 : _b.href) || "";
   }
   function getTotalDuration(playlist) {
     const matches = playlist.match(/#EXTINF:([\d.]+)/g) ?? [];
