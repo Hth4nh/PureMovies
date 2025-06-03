@@ -104,7 +104,8 @@
     adsRegexList: [
       new RegExp("(?<!#EXT-X-DISCONTINUITY[\\s\\S]*)#EXT-X-DISCONTINUITY\\n(?:.*?\\n){20,22}#EXT-X-DISCONTINUITY\\n(?![\\s\\S]*#EXT-X-DISCONTINUITY)", "g"),
       /#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:3.92|0.76|2.00|2.50|2.00|2.42|2.00|0.78|1.96)0000,\n.*\n){9}#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:2.00|1.76|3.20|2.00|1.36|2.00|2.00|0.72)0000,\n.*\n){8}(?=#EXT-X-DISCONTINUITY)/g
-    ]
+    ],
+    domainBypassWhitelist: ["kkphimplayer", "phim1280", "opstream"]
   };
   const caches = {
     blob: {}
@@ -192,7 +193,7 @@
   window.fetch = function(input2, init) {
     const url = input2.url ?? input2.href ?? input2;
     const hostname = new URL(url).hostname;
-    const isNeedToBypass = ["kkphimplayer", "phim1280", "opstream"].every(
+    const isNeedToBypass = config.domainBypassWhitelist.every(
       (keyword) => hostname.includes(keyword) === false
     );
     const isUsingByHls = ["loadSource", "loadFragment"].some(
@@ -410,7 +411,7 @@
     if (caches.blob[playlistUrl2.href]) {
       return caches.blob[playlistUrl2.href];
     }
-    const isNoNeedToBypass = ["phim1280", "opstream"].some(
+    const isNoNeedToBypass = config.domainBypassWhitelist.some(
       (keyword) => playlistUrl2.hostname.includes(keyword)
     );
     let req = isNoNeedToBypass ? await fetch(playlistUrl2) : await unrestrictedFetch(playlistUrl2, {
