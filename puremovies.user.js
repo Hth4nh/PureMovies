@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.0.5
+// @version                2.1.0
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -102,7 +102,8 @@
     ..._GM_info.script,
     betWarning: "Hành vi cá cược, cờ bạc online <b>LÀ VI PHẠM PHÁP LUẬT</b><br>theo Điều 321 Bộ luật Hình sự 2015 (sửa đổi, bổ sung 2017)",
     adsRegexList: [
-      /#EXT-X-DISCONTINUITY\n(?:#EXT-X-KEY:METHOD=NONE\n)?(?:(?:.*\n){18,24})?#EXT-X-DISCONTINUITY\n|convertv7\//g,
+      new RegExp("(?<!#EXT-X-DISCONTINUITY[\\s\\S]*)#EXT-X-DISCONTINUITY\\n(?:.*?\\n){18,24}#EXT-X-DISCONTINUITY\\n(?![\\s\\S]*#EXT-X-DISCONTINUITY)", "g"),
+      /#EXT-X-DISCONTINUITY\n(?:#EXT-X-KEY:METHOD=NONE\n(?:.*\n){18,24})?#EXT-X-DISCONTINUITY\n|convertv7\//g,
       /#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:3.92|0.76|2.00|2.50|2.00|2.42|2.00|0.78|1.96)0000,\n.*\n){9}#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:2.00|1.76|3.20|2.00|1.36|2.00|2.00|0.72)0000,\n.*\n){8}(?=#EXT-X-DISCONTINUITY)/g
     ],
     domainBypassWhitelist: ["kkphimplayer", "phim1280", "opstream"]
@@ -371,10 +372,11 @@
       ]
     });
   }
-  function getExceptionDuration() {
-    if (isHostnameContains("ophim", "opstream")) {
+  function getExceptionDuration(url) {
+    url = new URL(url);
+    if (["ophim", "opstream"].some((keyword) => url.hostname.includes(keyword))) {
       return 600;
-    } else if (isHostnameContains("nguonc", "streamc")) {
+    } else if (["nguonc", "streamc"].some((keyword) => url.hostname.includes(keyword))) {
       return Infinity;
     } else {
       return 900;
@@ -407,6 +409,23 @@
   function isContainAds(playlist) {
     return config.adsRegexList.some((regex) => regex.test(playlist));
   }
+  async function getOphimAdsBlockWorkaroundRegex() {
+    let playlistUrl2 = new URL("https://vip.opstream90.com/20250529/6593_07659334/3000k/hls/mixed.m3u8");
+    const isNoNeedToBypass = config.domainBypassWhitelist.some(
+      (keyword) => playlistUrl2.hostname.includes(keyword)
+    );
+    let req = isNoNeedToBypass ? await fetch(playlistUrl2) : await unrestrictedFetch(playlistUrl2, {
+      headers: {
+        Referer: playlistUrl2.origin
+      }
+    });
+    let playlist = await req.text();
+    const adsText = playlist.split("\n").slice(318, -48).join("\n");
+    const escapedAdsText = adsText.replace(/\./g, "\\.").replace(/\n/g, "\\n");
+    const regexString = escapedAdsText.replace(/[a-z0-9]{32}\\\.ts/g, ".*");
+    return new RegExp(regexString, "g");
+  }
+  let workaroundRegex = null;
   async function removeAds(playlistUrl2) {
     playlistUrl2 = new URL(playlistUrl2);
     if (caches.blob[playlistUrl2.href]) {
@@ -438,7 +457,12 @@
       playlist = config.adsRegexList.reduce((playlist2, regex) => {
         return playlist2.replaceAll(regex, "");
       }, playlist);
-    } else if (getTotalDuration(playlist) > getExceptionDuration()) {
+    } else if (getTotalDuration(playlist) <= getExceptionDuration(playlistUrl2)) ;
+    else if (["ophim", "opstream"].some((keyword) => playlistUrl2.hostname.includes(keyword))) {
+      console.warn("Ads not found, run workaround...");
+      workaroundRegex ?? (workaroundRegex = await getOphimAdsBlockWorkaroundRegex());
+      playlist = playlist.replaceAll(workaroundRegex, "");
+    } else {
       injectReportButton(playlistUrl2);
       console.error("Không tìm thấy quảng cáo");
     }
