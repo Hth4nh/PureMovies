@@ -35,7 +35,7 @@ export const elements = {
     body: null as HTMLBodyElement | null,
     playerContainer: null as HTMLDivElement | null,
     currentEpisode: null as HTMLAnchorElement | null,
-    dcmaTroll: null as HTMLImageElement | null,
+    dmcaTroll: null as HTMLImageElement | null,
     credit: null as HTMLParagraphElement | null,
 };
 

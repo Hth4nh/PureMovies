@@ -1,17 +1,17 @@
 import { config, elements } from "../misc/state";
 
 export function injectCredit(element: Element | null) {
-    // DCMA troll
-    elements.dcmaTroll ??= (() => {
-        const dcmaTroll = document.createElement("img");
+    // DMCA troll
+    elements.dmcaTroll ??= (() => {
+        const dmcaTroll = document.createElement("img");
 
-        Object.assign(dcmaTroll, {
+        Object.assign(dmcaTroll, {
             className: "pt-2",
             alt: "DMCA troll",
             src: "https://images.dmca.com/Badges/dmca-badge-w150-5x1-01.png",
-        } as Partial<typeof dcmaTroll>);
+        } as Partial<typeof dmcaTroll>);
 
-        return dcmaTroll;
+        return dmcaTroll;
     })();
 
     // Footer credit
@@ -27,6 +27,6 @@ export function injectCredit(element: Element | null) {
         return credit;
     })();
 
-    element?.before(elements.dcmaTroll);
+    element?.before(elements.dmcaTroll);
     element?.after(elements.credit);
 }
