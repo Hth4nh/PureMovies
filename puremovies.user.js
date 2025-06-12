@@ -115,7 +115,7 @@
     body: null,
     playerContainer: null,
     currentEpisode: null,
-    dcmaTroll: null,
+    dmcaTroll: null,
     credit: null
   };
   const instances = {
@@ -524,14 +524,14 @@
     return parseFloat(getComputedStyle(document.documentElement).fontSize);
   }
   function injectCredit(element) {
-    elements.dcmaTroll ?? (elements.dcmaTroll = (() => {
-      const dcmaTroll = document.createElement("img");
-      Object.assign(dcmaTroll, {
+    elements.dmcaTroll ?? (elements.dmcaTroll = (() => {
+      const dmcaTroll = document.createElement("img");
+      Object.assign(dmcaTroll, {
         className: "pt-2",
         alt: "DMCA troll",
         src: "https://images.dmca.com/Badges/dmca-badge-w150-5x1-01.png"
       });
-      return dcmaTroll;
+      return dmcaTroll;
     })());
     elements.credit ?? (elements.credit = (() => {
       const credit = document.createElement("p");
@@ -541,7 +541,7 @@
       });
       return credit;
     })());
-    element == null ? void 0 : element.before(elements.dcmaTroll);
+    element == null ? void 0 : element.before(elements.dmcaTroll);
     element == null ? void 0 : element.after(elements.credit);
   }
   function injectReportButton(playlistUrl2) {
