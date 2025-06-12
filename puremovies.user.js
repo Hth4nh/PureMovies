@@ -407,7 +407,10 @@
     }, 0);
   }
   function isContainAds(playlist) {
-    return config.adsRegexList.some((regex) => regex.test(playlist));
+    return config.adsRegexList.some((regex) => {
+      regex.lastIndex = 0;
+      return regex.test(playlist);
+    });
   }
   async function getOphimAdsBlockWorkaroundRegex() {
     let playlistUrl2 = new URL("https://vip.opstream90.com/20250529/6593_07659334/3000k/hls/mixed.m3u8");
