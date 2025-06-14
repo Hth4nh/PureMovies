@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.1.0
+// @version                2.2.0
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -25,10 +25,10 @@
 // @match                  https://vip.opstream16.com/share/*
 // @match                  https://vip.opstream17.com/share/*
 // @match                  https://vip.opstream90.com/share/*
-// @require                https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.3.0
-// @require                https://cdn.jsdelivr.net/npm/hls.js@1.6.0
+// @require                https://cdn.jsdelivr.net/npm/hls.js@1.6.5
 // @require                https://cdn.jsdelivr.net/npm/notyf@3.10.0
-// @require                https://cdn.jsdelivr.net/npm/artplayer@5.2.2
+// @require                https://cdn.jsdelivr.net/npm/artplayer@5.2.3
+// @require                https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.3.0
 // @connect                phim1280.tv
 // @connect                kkphimplayer.com
 // @connect                kkphimplayer1.com

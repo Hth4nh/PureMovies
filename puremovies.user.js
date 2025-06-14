@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.1.0
+// @version                2.2.0
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -25,10 +25,10 @@
 // @match                  https://vip.opstream16.com/share/*
 // @match                  https://vip.opstream17.com/share/*
 // @match                  https://vip.opstream90.com/share/*
-// @require                https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.3.0
-// @require                https://cdn.jsdelivr.net/npm/hls.js@1.6.0
+// @require                https://cdn.jsdelivr.net/npm/hls.js@1.6.5
 // @require                https://cdn.jsdelivr.net/npm/notyf@3.10.0
-// @require                https://cdn.jsdelivr.net/npm/artplayer@5.2.2
+// @require                https://cdn.jsdelivr.net/npm/artplayer@5.2.3
+// @require                https://cdn.jsdelivr.net/npm/@trim21/gm-fetch@0.3.0
 // @connect                phim1280.tv
 // @connect                kkphimplayer.com
 // @connect                kkphimplayer1.com
@@ -192,18 +192,13 @@
   }
   const originalFetch = window.fetch;
   window.fetch = function(input2, init) {
-    const url = input2.url ?? input2.href ?? input2;
-    const hostname = new URL(url).hostname;
-    const isNeedToBypass = config.domainBypassWhitelist.every(
-      (keyword) => hostname.includes(keyword) === false
-    );
     const isUsingByHls = ["loadSource", "loadFragment"].some(
       (functionName) => {
         var _a;
         return (_a = new Error().stack) == null ? void 0 : _a.includes(functionName);
       }
     );
-    if (isNeedToBypass && isUsingByHls) {
+    if (isUsingByHls) {
       return unrestrictedFetch(input2, init);
     }
     return originalFetch(input2, init);
@@ -383,22 +378,29 @@
     }
   }
   async function getPlaylistURL(embedUrl2) {
-    var _a, _b;
+    var _a, _b, _c, _d;
     embedUrl2 = new URL(embedUrl2);
     if (embedUrl2.hostname.includes("phimapi") && embedUrl2.searchParams.has("url")) {
       return embedUrl2.searchParams.get("url") ?? "";
     }
-    const isNoNeedToBypass = config.domainBypassWhitelist.some(
-      (keyword) => embedUrl2.hostname.includes(keyword)
-    );
-    const req = isNoNeedToBypass ? await fetch(embedUrl2) : await unrestrictedFetch(embedUrl2, {
-      headers: {
-        Referer: embedUrl2.origin
-      }
-    });
-    const raw = await req.text();
-    const playlistUrl2 = (_a = raw.match(new RegExp('(?<=(?:url =|file:) ").*(?="(?:;|,))'))) == null ? void 0 : _a[0];
-    return ((_b = URL.parse(String(playlistUrl2), embedUrl2)) == null ? void 0 : _b.href) || "";
+    if (embedUrl2.hostname.includes("opstream")) {
+      const req = await fetch(embedUrl2);
+      const raw = await req.text();
+      const playlistUrl2 = (_a = raw.match(new RegExp('(?<=const url = ").*(?=";)'))) == null ? void 0 : _a[0];
+      return ((_b = URL.parse(String(playlistUrl2), embedUrl2)) == null ? void 0 : _b.href) || "";
+    }
+    if (embedUrl2.hostname.includes("streamc")) {
+      const req = await unrestrictedFetch(embedUrl2, {
+        headers: {
+          Referer: embedUrl2.origin
+        }
+      });
+      const raw = await req.text();
+      const encryptedURL = (_c = raw.match(new RegExp('(?<=encryptedURL = ").*(?=";)'))) == null ? void 0 : _c[0];
+      const playlistUrl2 = `conf.php?url=${encodeURIComponent(String(encryptedURL))}`;
+      return ((_d = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _d.href) || "";
+    }
+    return embedUrl2.href;
   }
   function getTotalDuration(playlist) {
     const matches = playlist.match(/#EXTINF:([\d.]+)/g) ?? [];
@@ -690,7 +692,7 @@
       return fetch(input, options);
     }
     const rawUrlString = input instanceof Request ? input.url : input.href;
-    const [requestUrl, kodiHeaderString = ""] = rawUrlString.split("|", 2);
+    const [requestUrl, kodiHeaderString = ""] = rawUrlString.split(/#?\|/, 2);
     const kodiStyleHeaders = kodiHeaderString.split("&").filter(Boolean).reduce((headers, pair) => {
       const separatorIndex = pair.indexOf("=");
       if (separatorIndex > 0) {
