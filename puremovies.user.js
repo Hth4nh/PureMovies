@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.2.1
+// @version                2.2.2
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -367,8 +367,42 @@
       return 900;
     }
   }
+  async function getPlaylistURLFromNguonC(embedUrl2, options2 = {}, retry = 0) {
+    var _a, _b, _c, _d, _e;
+    if (retry > 3) {
+      console.warn("Failed to get playlist URL after multiple attempts.");
+      return "";
+    }
+    embedUrl2 = new URL(embedUrl2);
+    const req = await unrestrictedFetch(embedUrl2, options2);
+    const raw = await req.text();
+    const encryptedURL = (_a = raw.match(new RegExp('(?<=encryptedURL = ").*(?=";)'))) == null ? void 0 : _a[0];
+    if (encryptedURL) {
+      const playlistUrl2 = `conf.php?url=${encodeURIComponent(encryptedURL)}`;
+      return ((_b = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _b.href) || "";
+    }
+    const streamURL = (_c = raw.match(new RegExp('(?<=(?:streamURL =|url =|file:) ").*(?="(?:;|,))'))) == null ? void 0 : _c[0];
+    if (streamURL) {
+      const playlistUrl2 = JSON.parse(`"${streamURL}"`);
+      return ((_d = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _d.href) || "";
+    }
+    const encryptedPayload = (_e = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _e[0];
+    if (encryptedPayload) {
+      const optionsWithPayload = {
+        ...options2,
+        method: "POST",
+        headers: {
+          ...options2.headers,
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `payload=${encodeURIComponent(JSON.parse(`"${encryptedPayload}"`))}`
+      };
+      return getPlaylistURLFromNguonC(embedUrl2, optionsWithPayload, retry + 1);
+    }
+    return embedUrl2.href.replace("embed.php", "get.php");
+  }
   async function getPlaylistURL(embedUrl2) {
-    var _a, _b, _c, _d, _e, _f;
+    var _a, _b;
     embedUrl2 = new URL(embedUrl2);
     if (embedUrl2.hostname.includes("phimapi") && embedUrl2.searchParams.has("url")) {
       return embedUrl2.searchParams.get("url") ?? "";
@@ -380,23 +414,7 @@
       return ((_b = URL.parse(String(playlistUrl2), embedUrl2)) == null ? void 0 : _b.href) || "";
     }
     if (embedUrl2.hostname.includes("streamc")) {
-      const req = await unrestrictedFetch(embedUrl2, {
-        headers: {
-          Referer: embedUrl2.origin
-        }
-      });
-      const raw = await req.text();
-      const encryptedURL = (_c = raw.match(new RegExp('(?<=encryptedURL = ").*(?=";)'))) == null ? void 0 : _c[0];
-      if (encryptedURL) {
-        const playlistUrl2 = `conf.php?url=${encodeURIComponent(encryptedURL)}`;
-        return ((_d = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _d.href) || "";
-      }
-      const streamURL = (_e = raw.match(new RegExp('(?<=(?:streamURL =|url =|file:) ").*(?="(?:;|,))'))) == null ? void 0 : _e[0];
-      if (streamURL) {
-        const playlistUrl2 = JSON.parse(`"${streamURL}"`);
-        return ((_f = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _f.href) || "";
-      }
-      return embedUrl2.href.replace("embed.php", "get.php");
+      return getPlaylistURLFromNguonC(embedUrl2);
     }
     return embedUrl2.href;
   }
