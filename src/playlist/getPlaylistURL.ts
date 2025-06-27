@@ -8,7 +8,7 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
 
     // Parse the input URL
     embedUrl = new URL(embedUrl);
-    
+
     const req = await unrestrictedFetch(embedUrl, options);
     const raw = await req.text();
 
@@ -23,6 +23,13 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
     const streamURL = raw.match(/(?<=(?:streamURL =|url =|file:) ").*(?="(?:;|,))/)?.[0];
     if (streamURL) {
         const playlistUrl = JSON.parse(`"${streamURL}"`);
+        return URL.parse(playlistUrl, embedUrl)?.href || "";
+    }
+
+    // Try to find the stream URL in the script tag
+    const streamURLInScriptTag = raw.match(/(?<=<script.*?src=".*?url=)[^&"]*?\.m3u8[^&"]*/)?.[0];
+    if (streamURLInScriptTag) {
+        const playlistUrl = decodeURIComponent(streamURLInScriptTag);
         return URL.parse(playlistUrl, embedUrl)?.href || "";
     }
 
