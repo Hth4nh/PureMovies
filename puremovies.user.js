@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.2.2
+// @version                2.2.3
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -368,7 +368,7 @@
     }
   }
   async function getPlaylistURLFromNguonC(embedUrl2, options2 = {}, retry = 0) {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d, _e, _f, _g;
     if (retry > 3) {
       console.warn("Failed to get playlist URL after multiple attempts.");
       return "";
@@ -386,7 +386,12 @@
       const playlistUrl2 = JSON.parse(`"${streamURL}"`);
       return ((_d = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _d.href) || "";
     }
-    const encryptedPayload = (_e = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _e[0];
+    const streamURLInScriptTag = (_e = raw.match(new RegExp('(?<=<script.*?src=".*?url=)[^&"]*?\\.m3u8[^&"]*'))) == null ? void 0 : _e[0];
+    if (streamURLInScriptTag) {
+      const playlistUrl2 = decodeURIComponent(streamURLInScriptTag);
+      return ((_f = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _f.href) || "";
+    }
+    const encryptedPayload = (_g = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _g[0];
     if (encryptedPayload) {
       const optionsWithPayload = {
         ...options2,
