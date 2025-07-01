@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.2.3
+// @version                2.2.4
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -104,7 +104,7 @@
     adsRegexList: [
       new RegExp("(?<!#EXT-X-DISCONTINUITY[\\s\\S]*)#EXT-X-DISCONTINUITY\\n(?:.*?\\n){18,24}#EXT-X-DISCONTINUITY\\n(?![\\s\\S]*#EXT-X-DISCONTINUITY)", "g"),
       /#EXT-X-DISCONTINUITY\n(?:#EXT-X-KEY:METHOD=NONE\n(?:.*\n){18,24})?#EXT-X-DISCONTINUITY\n|convertv7\//g,
-      /#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:3.92|0.76|2.00|2.50|2.00|2.42|2.00|0.78|1.96)0000,\n.*\n){9}#EXT-X-DISCONTINUITY\n(?:#EXTINF:(?:2.00|1.76|3.20|2.00|1.36|2.00|2.00|0.72)0000,\n.*\n){8}(?=#EXT-X-DISCONTINUITY)/g
+      /#EXT-X-DISCONTINUITY\n#EXTINF:3\.920000,\n.*\n#EXTINF:0\.760000,\n.*\n#EXTINF:2\.000000,\n.*\n#EXTINF:2\.500000,\n.*\n#EXTINF:2\.000000,\n.*\n#EXTINF:2\.420000,\n.*\n#EXTINF:2\.000000,\n.*\n#EXTINF:0\.780000,\n.*\n#EXTINF:1\.960000,\n.*\n#EXTINF:2\.000000,\n.*\n#EXTINF:1\.760000,\n.*\n#EXTINF:3\.200000,\n.*\n#EXTINF:2\.000000,\n.*\n#EXTINF:1\.360000,\n.*\n#EXTINF:2\.000000,\n.*\n#EXTINF:2\.000000,\n.*\n#EXTINF:0\.720000,\n.*/g
     ],
     domainBypassWhitelist: ["kkphimplayer", "phim1280", "opstream"]
   };
@@ -437,16 +437,31 @@
   }
   async function getOphimAdsBlockWorkaroundRegex() {
     let playlistUrl2 = new URL("https://vip.opstream90.com/20250529/6593_07659334/3000k/hls/mixed.m3u8");
-    const isNoNeedToBypass = config.domainBypassWhitelist.some(
-      (keyword) => playlistUrl2.hostname.includes(keyword)
-    );
+    const isNoNeedToBypass = config.domainBypassWhitelist.some((keyword) => playlistUrl2.hostname.includes(keyword));
     let req = isNoNeedToBypass ? await fetch(playlistUrl2) : await unrestrictedFetch(playlistUrl2, {
       headers: {
         Referer: playlistUrl2.origin
       }
     });
-    let playlist = await req.text();
-    const adsText = playlist.split("\n").slice(318, -48).join("\n");
+    const playlist = await req.text();
+    const lines = playlist.split("\n");
+    let firstSegmentEnd = 0;
+    let lastSegmentStart = lines.length;
+    let firstSegmentDuration = 0;
+    let lastSegmentDuration = 0;
+    while (firstSegmentDuration < 596) {
+      const match = lines[firstSegmentEnd++].match(/#EXTINF:(\d\.\d+),/);
+      if (match) {
+        firstSegmentDuration += Number(match[1]);
+      }
+    }
+    while (lastSegmentDuration < 84) {
+      const match = lines[--lastSegmentStart].match(/#EXTINF:(\d\.\d+),/);
+      if (match) {
+        lastSegmentDuration += Number(match[1]);
+      }
+    }
+    const adsText = playlist.split("\n").slice(firstSegmentEnd + 1, lastSegmentStart - 1).join("\n");
     const escapedAdsText = adsText.replace(/\./g, "\\.").replace(/\n/g, "\\n");
     const regexString = escapedAdsText.replace(/[a-z0-9]{32}\\\.ts/g, ".*");
     return new RegExp(regexString, "g");
@@ -457,26 +472,19 @@
     if (caches.blob[playlistUrl2.href]) {
       return caches.blob[playlistUrl2.href];
     }
-    const isNoNeedToBypass = config.domainBypassWhitelist.some(
-      (keyword) => playlistUrl2.hostname.includes(keyword)
-    );
+    const isNoNeedToBypass = config.domainBypassWhitelist.some((keyword) => playlistUrl2.hostname.includes(keyword));
     let req = isNoNeedToBypass ? await fetch(playlistUrl2) : await unrestrictedFetch(playlistUrl2, {
       headers: {
         Referer: playlistUrl2.origin
       }
     });
     let playlist = await req.text();
-    playlist = playlist.replace(
-      /^[^#].*$/gm,
-      (line) => {
-        var _a, _b;
-        return ((_b = (_a = URL.parse(line, playlistUrl2)) == null ? void 0 : _a.toString) == null ? void 0 : _b.call(_a)) ?? line;
-      }
-    );
+    playlist = playlist.replace(/^[^#].*$/gm, (line) => {
+      var _a, _b;
+      return ((_b = (_a = URL.parse(line, playlistUrl2)) == null ? void 0 : _a.toString) == null ? void 0 : _b.call(_a)) ?? line;
+    });
     if (playlist.includes("#EXT-X-STREAM-INF")) {
-      caches.blob[playlistUrl2.href] = await removeAds(
-        playlist.trim().split("\n").slice(-1)[0]
-      );
+      caches.blob[playlistUrl2.href] = await removeAds(playlist.trim().split("\n").slice(-1)[0]);
       return caches.blob[playlistUrl2.href];
     }
     if (isContainAds(playlist)) {
