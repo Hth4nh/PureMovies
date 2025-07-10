@@ -17,21 +17,21 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
     const encryptedURL = raw.match(/(?<=encryptedURL = ").*(?=";)/)?.[0];
     if (encryptedURL) {
         const playlistUrl = `conf.php?url=${encodeURIComponent(encryptedURL)}`;
-        return URL.parse(playlistUrl, embedUrl)?.href || "";
+        return URL.parse(playlistUrl, embedUrl.href)?.href || "";
     }
 
     // Try to find the stream URL in the response
     const streamURL = raw.match(/(?<=(?:streamURL =|url =|file:|streamUrl":)\s?").*(?="(?:;|,|}))/)?.[0];
     if (streamURL) {
         const playlistUrl = JSON.parse(`"${streamURL}"`);
-        return URL.parse(playlistUrl, embedUrl)?.href || "";
+        return URL.parse(playlistUrl, embedUrl.href)?.href || "";
     }
 
     // Try to find the stream URL in the script tag
     const streamURLInScriptTag = raw.match(/(?<=<script.*?src=".*?url=)[^&"]*?\.m3u8[^&"]*/)?.[0];
     if (streamURLInScriptTag) {
         const playlistUrl = decodeURIComponent(streamURLInScriptTag);
-        return URL.parse(playlistUrl, embedUrl)?.href || "";
+        return URL.parse(playlistUrl, embedUrl.href)?.href || "";
     }
 
     // Try to find the stream URL from API
@@ -50,7 +50,7 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
     const apiStreamURL = apiRaw.match(/(?<=(?:streamURL =|url =|file:|streamUrl":)\s?").*(?="(?:;|,|}))/)?.[0];
     if (apiStreamURL) {
         const playlistUrl = JSON.parse(`"${apiStreamURL}"`);
-        return URL.parse(playlistUrl, embedUrl)?.href || "";
+        return URL.parse(playlistUrl, embedUrl.href)?.href || "";
     }
 
     // If no URL is found, try to find the encrypted payload and resend the request with it
