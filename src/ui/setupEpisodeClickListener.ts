@@ -3,21 +3,15 @@ import { getRemValue, scrollIntoView, waitForElement } from ".";
 
 export async function setupEpisodeClickListener(
     episodeListParentQuery: string,
-    onEpisodeClickCallback: (embedUrl: string | URL) => void | Promise<void> =
-        () => {},
+    onEpisodeClickCallback: (embedUrl: string | URL) => void | Promise<void> = () => {},
 ) {
-    const episodeListParent = await waitForElement<HTMLDivElement>(
-        episodeListParentQuery,
-    );
+    const episodeListParent = await waitForElement<HTMLDivElement>(episodeListParentQuery);
 
     // Add click event to change video
     episodeListParent.onclick = async (e) => {
         e.preventDefault();
 
-        if (
-            e.target instanceof HTMLAnchorElement &&
-            e.target !== elements.currentEpisode
-        ) {
+        if (e.target instanceof HTMLAnchorElement && e.target !== elements.currentEpisode) {
             elements.currentEpisode?.classList.remove("cuki-episode-current");
 
             elements.currentEpisode = e.target;

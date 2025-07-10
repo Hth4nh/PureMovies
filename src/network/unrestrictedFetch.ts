@@ -28,19 +28,14 @@ import { instances } from "../misc/state";
  * const requestWithKodiHeaders = new Request('https://api.example.com/other|Auth=123');
  * await unrestrictedFetch(requestWithKodiHeaders, { headers: { 'Accept': 'application/json' } });
  */
-export async function unrestrictedFetch(
-    input: RequestInfo | URL,
-    options: RequestInit = {},
-): Promise<Response> {
+export async function unrestrictedFetch(input: RequestInfo | URL, options: RequestInit = {}): Promise<Response> {
     if (typeof input === "string") {
         // Parse the input URL
         input = new URL(input);
     }
 
     // Get the protocol for blob/data check - works for both URL and Request
-    const protocol = input instanceof Request
-        ? new URL(input.url).protocol
-        : input.protocol;
+    const protocol = input instanceof Request ? new URL(input.url).protocol : input.protocol;
 
     // Use native fetch for local URL schemes not requiring network/CORS.
     if (protocol === "blob:" || protocol === "data:") {
@@ -62,9 +57,7 @@ export async function unrestrictedFetch(
             const separatorIndex = pair.indexOf("=");
             if (separatorIndex > 0) {
                 const key = pair.slice(0, separatorIndex);
-                const value = decodeURIComponent(
-                    pair.slice(separatorIndex + 1),
-                );
+                const value = decodeURIComponent(pair.slice(separatorIndex + 1));
                 headers[key] = value;
             }
             return headers;
@@ -110,10 +103,7 @@ export async function unrestrictedFetch(
         });
 
         // @ts-expect-error
-        window.tmp = await remoteImport(
-            "https://cdn.jsdelivr.net/npm/@trim21/gm-fetch",
-            "GM_fetch",
-        );
+        window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/@trim21/gm-fetch", "GM_fetch");
         eval("GM_fetch = window.tmp;");
     }
 

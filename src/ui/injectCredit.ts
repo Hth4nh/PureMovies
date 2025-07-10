@@ -20,8 +20,7 @@ export function injectCredit(element: Element | null) {
 
         Object.assign(credit, {
             className: "pt-2",
-            textContent:
-                `${config.name} v${config.version} | Được viết bởi ${config.author}`,
+            textContent: `${config.name} v${config.version} | Được viết bởi ${config.author}`,
         } as Partial<typeof credit>);
 
         return credit;

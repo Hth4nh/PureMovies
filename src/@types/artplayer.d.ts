@@ -1,1 +1,1 @@
-declare module 'artplayer/src/i18n/vi.js';
+declare module "artplayer/src/i18n/vi.js";

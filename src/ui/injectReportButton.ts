@@ -25,10 +25,7 @@ export function injectReportButton(playlistUrl: string | URL) {
         html: getSvgMarkupFromDataUrl(warningIconURL),
         tooltip: "Không tìm thấy quảng cáo - Bấm để báo cáo lỗi",
         click: function () {
-            window.open(
-                `${config.homepageURL}/issues/new?${params.toString()}`,
-                "_blank",
-            );
+            window.open(`${config.homepageURL}/issues/new?${params.toString()}`, "_blank");
         },
     });
 }

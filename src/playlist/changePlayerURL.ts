@@ -16,7 +16,7 @@ window.fetch = function (input, init) {
     // );
 
     const isUsingByHls = ["loadSource", "loadFragment"].some((functionName) =>
-        new Error().stack?.includes(functionName)
+        new Error().stack?.includes(functionName),
     );
 
     if (isUsingByHls) {
@@ -45,10 +45,7 @@ export async function changePlayerURL(embedUrl: string | URL) {
         });
 
         // @ts-expect-error
-        window.tmp = await remoteImport(
-            "https://cdn.jsdelivr.net/npm/hls.js",
-            "Hls",
-        );
+        window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/hls.js", "Hls");
         eval("Hls = window.tmp;");
     }
 
@@ -67,9 +64,7 @@ export async function changePlayerURL(embedUrl: string | URL) {
 
         instances.player.hls = hls;
         instances.player.on("destroy", () => hls.destroy());
-    } else if (
-        instances.player.video.canPlayType("application/vnd.apple.mpegurl")
-    ) {
+    } else if (instances.player.video.canPlayType("application/vnd.apple.mpegurl")) {
         instances.player.video.src = playlistUrl;
     }
 

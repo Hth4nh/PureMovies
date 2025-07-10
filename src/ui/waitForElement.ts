@@ -16,9 +16,7 @@ export async function waitForElement<T extends Element = Element>(
     if (signal?.aborted) {
         return Promise.reject(
             new Error(
-                `Aborted immediately: Element "${selector}" not found in ${
-                    root === document ? "document" : "element"
-                }`,
+                `Aborted immediately: Element "${selector}" not found in ${root === document ? "document" : "element"}`,
             ),
         );
     }
@@ -36,11 +34,7 @@ export async function waitForElement<T extends Element = Element>(
         signal?.addEventListener("abort", () => {
             observer.disconnect();
             reject(
-                new Error(
-                    `Aborted: Element "${selector}" not found in ${
-                        root === document ? "document" : "element"
-                    }`,
-                ),
+                new Error(`Aborted: Element "${selector}" not found in ${root === document ? "document" : "element"}`),
             );
         });
 

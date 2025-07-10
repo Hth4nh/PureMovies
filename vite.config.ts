@@ -21,10 +21,7 @@ const kkphimMatch = [
     "https://player.phimapi.com/player/*",
 ];
 
-const nguoncMatch = [
-    "https://phim.nguonc.com/*",
-    "https://*.streamc.xyz/*",
-];
+const nguoncMatch = ["https://phim.nguonc.com/*", "https://*.streamc.xyz/*"];
 
 const ophimMatch = [
     "https://ophim17.cc/*",
@@ -64,9 +61,7 @@ const connect = [
     "*",
 ];
 
-const repoName = process.env.GITHUB_REPOSITORY
-    ? process.env.GITHUB_REPOSITORY.split("/")[1]
-    : "PureMovies";
+const repoName = process.env.GITHUB_REPOSITORY ? process.env.GITHUB_REPOSITORY.split("/")[1] : "PureMovies";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
@@ -76,15 +71,11 @@ export default defineConfig(({ command }) => ({
             userscript: {
                 name: "Cuki's PureMovie",
                 namespace: "Hth4nh",
-                description:
-                    `Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.`,
+                description: `Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.`,
                 homepageURL: "https://github.com/Hth4nh/PureMovies",
-                icon:
-                    "https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png",
-                updateURL:
-                    "https://hth4nh.github.io/PureMovies/puremovies.meta.js",
-                downloadURL:
-                    "https://hth4nh.github.io/PureMovies/puremovies.user.js",
+                icon: "https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png",
+                updateURL: "https://hth4nh.github.io/PureMovies/puremovies.meta.js",
+                downloadURL: "https://hth4nh.github.io/PureMovies/puremovies.user.js",
                 match: [...kkphimMatch, ...nguoncMatch, ...ophimMatch],
                 connect: connect,
                 grant: ["GM.xmlHttpRequest"],
@@ -94,11 +85,9 @@ export default defineConfig(({ command }) => ({
                 metaFileName: true,
                 externalGlobals: {
                     "hls.js": cdn.jsdelivr(tryCatchWrapper("Hls")),
-                    "notyf": cdn.jsdelivr(tryCatchWrapper("{Notyf}")),
-                    "artplayer": cdn.jsdelivr(tryCatchWrapper("Artplayer")),
-                    "@trim21/gm-fetch": cdn.jsdelivr(
-                        tryCatchWrapper("GM_fetch"),
-                    ),
+                    notyf: cdn.jsdelivr(tryCatchWrapper("{Notyf}")),
+                    artplayer: cdn.jsdelivr(tryCatchWrapper("Artplayer")),
+                    "@trim21/gm-fetch": cdn.jsdelivr(tryCatchWrapper("GM_fetch")),
                 },
             },
             format: {

@@ -16,10 +16,7 @@ export async function createNotification() {
         console.warn("Notyf not found. Run workaround...");
 
         // @ts-expect-error
-        window.tmp = await remoteImport(
-            "https://cdn.jsdelivr.net/npm/notyf",
-            "Notyf",
-        );
+        window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/notyf", "Notyf");
         eval(`notyf = { Notyf: window.tmp }`);
     }
 

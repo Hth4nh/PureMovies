@@ -3,7 +3,7 @@ import backwardIconURL from "../assets/icons/backward.svg";
 import forwardIconURL from "../assets/icons/forward.svg";
 
 import Artplayer from "artplayer";
-import vi from 'artplayer/src/i18n/vi.js';
+import vi from "artplayer/src/i18n/vi.js";
 
 import { config, instances } from "../misc/state";
 import { getSvgMarkupFromDataUrl } from "../misc/getSvgMarkupFromDataUrl";
@@ -23,16 +23,13 @@ export async function createPlayer(playlistUrl: string | URL = "") {
         });
 
         // @ts-expect-error
-        window.tmp = await remoteImport(
-            "https://cdn.jsdelivr.net/npm/artplayer",
-            "Artplayer",
-        );
+        window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/artplayer", "Artplayer");
         eval("Artplayer = window.tmp;");
     }
 
     return new Artplayer({
         container: ".cuki-player-container",
-        url: (playlistUrl === "") ? "" : new URL(playlistUrl).href,
+        url: playlistUrl === "" ? "" : new URL(playlistUrl).href,
         autoplay: true,
         autoSize: false,
         loop: false,
@@ -78,8 +75,7 @@ export async function createPlayer(playlistUrl: string | URL = "") {
             },
             {
                 position: "right",
-                html:
-                    `<img src="${logoURL}" style="height: 25px; padding: 0 7px; transform: translateY(-12%);">`,
+                html: `<img src="${logoURL}" style="height: 25px; padding: 0 7px; transform: translateY(-12%);">`,
                 index: 1,
                 tooltip: config.name,
             },
