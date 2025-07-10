@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.2.5
+// @version                2.2.6
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -146,10 +146,7 @@
       if (!notyf.Notyf) throw "";
     } catch (e) {
       console.warn("Notyf not found. Run workaround...");
-      window.tmp = await remoteImport(
-        "https://cdn.jsdelivr.net/npm/notyf",
-        "Notyf"
-      );
+      window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/notyf", "Notyf");
       eval(`notyf = { Notyf: window.tmp }`);
     }
     return new notyf.Notyf({
@@ -178,14 +175,7 @@
     if (tagName === "iframe") {
       playerContainer.setAttribute("allowfullscreen", "");
     }
-    playerContainer.classList.add(
-      "cuki-player-container",
-      "w-full",
-      "mx-2",
-      "sm:mx-0",
-      "mt-4",
-      "rounded-lg"
-    );
+    playerContainer.classList.add("cuki-player-container", "w-full", "mx-2", "sm:mx-0", "mt-4", "rounded-lg");
     let parent = await waitForElement(parentQuery);
     parent.append(playerContainer);
     return playerContainer;
@@ -218,10 +208,7 @@
         type: "warning",
         message: "Hls not found. Run workaround..."
       });
-      window.tmp = await remoteImport(
-        "https://cdn.jsdelivr.net/npm/hls.js",
-        "Hls"
-      );
+      window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/hls.js", "Hls");
       eval("Hls = window.tmp;");
     }
     if (Hls.isSupported()) {
@@ -296,10 +283,7 @@
         type: "warning",
         message: "Artplayer not found. Run workaround..."
       });
-      window.tmp = await remoteImport(
-        "https://cdn.jsdelivr.net/npm/artplayer",
-        "Artplayer"
-      );
+      window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/artplayer", "Artplayer");
       eval("Artplayer = window.tmp;");
     }
     return new Artplayer({
@@ -368,7 +352,7 @@
     }
   }
   async function getPlaylistURLFromNguonC(embedUrl2, options2 = {}, retry = 0) {
-    var _a, _b, _c, _d, _e, _f, _g;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i;
     if (retry > 3) {
       console.warn("Failed to get playlist URL after multiple attempts.");
       return "";
@@ -392,7 +376,23 @@
       const playlistUrl2 = decodeURIComponent(streamURLInScriptTag);
       return ((_f = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _f.href) || "";
     }
-    const encryptedPayload = (_g = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _g[0];
+    const apiReq = await unrestrictedFetch(`${embedUrl2.origin}${embedUrl2.pathname}?api=stream`, {
+      ...options2,
+      method: "POST",
+      headers: {
+        ...options2.headers,
+        "Content-Type": "application/json",
+        Referer: embedUrl2.href
+      },
+      body: JSON.stringify({ hash: embedUrl2.searchParams.get("hash") })
+    });
+    const apiRaw = await apiReq.text();
+    const apiStreamURL = (_g = apiRaw.match(new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":)\\s?").*(?="(?:;|,|}))'))) == null ? void 0 : _g[0];
+    if (apiStreamURL) {
+      const playlistUrl2 = JSON.parse(`"${apiStreamURL}"`);
+      return ((_h = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _h.href) || "";
+    }
+    const encryptedPayload = (_i = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _i[0];
     if (encryptedPayload) {
       const optionsWithPayload = {
         ...options2,
@@ -512,10 +512,7 @@
     var _a;
     const callbackFn = async (url) => {
       var _a2, _b;
-      elements.playerContainer ?? (elements.playerContainer = await createPlayerContainer(
-        epsListParentQuery,
-        "div"
-      ));
+      elements.playerContainer ?? (elements.playerContainer = await createPlayerContainer(epsListParentQuery, "div"));
       instances.notification ?? (instances.notification = await createNotification());
       (_a2 = instances.notification) == null ? void 0 : _a2.dismissAll();
       (_b = instances.notification) == null ? void 0 : _b.open({
@@ -527,12 +524,14 @@
     };
     const start = () => {
       const elementList = [
-        ...document.querySelectorAll([
-          "#list_episode ~ * > button",
-          "#list_episode ~ * > .card-collapse-content",
-          "[id^=headlessui-disclosure-button]",
-          "[id^=headlessui-disclosure-panel]"
-        ].join(", "))
+        ...document.querySelectorAll(
+          [
+            "#list_episode ~ * > button",
+            "#list_episode ~ * > .card-collapse-content",
+            "[id^=headlessui-disclosure-button]",
+            "[id^=headlessui-disclosure-panel]"
+          ].join(", ")
+        )
       ];
       elementList.slice(-6).forEach((element) => {
         element.style.display = "none";
@@ -600,10 +599,7 @@
       html: getSvgMarkupFromDataUrl(warningIconURL),
       tooltip: "Không tìm thấy quảng cáo - Bấm để báo cáo lỗi",
       click: function() {
-        window.open(
-          `${config.homepageURL}/issues/new?${params.toString()}`,
-          "_blank"
-        );
+        window.open(`${config.homepageURL}/issues/new?${params.toString()}`, "_blank");
       }
     });
   }
@@ -661,9 +657,7 @@
   }
   async function setupEpisodeClickListener(episodeListParentQuery, onEpisodeClickCallback = () => {
   }) {
-    const episodeListParent = await waitForElement(
-      episodeListParentQuery
-    );
+    const episodeListParent = await waitForElement(episodeListParentQuery);
     episodeListParent.onclick = async (e2) => {
       var _a;
       e2.preventDefault();
@@ -704,9 +698,7 @@
       signal == null ? void 0 : signal.addEventListener("abort", () => {
         observer.disconnect();
         reject(
-          new Error(
-            `Aborted: Element "${selector}" not found in ${root === document ? "document" : "element"}`
-          )
+          new Error(`Aborted: Element "${selector}" not found in ${root === document ? "document" : "element"}`)
         );
       });
       observer.observe(root, { childList: true, subtree: true });
@@ -727,9 +719,7 @@
       const separatorIndex = pair.indexOf("=");
       if (separatorIndex > 0) {
         const key = pair.slice(0, separatorIndex);
-        const value = decodeURIComponent(
-          pair.slice(separatorIndex + 1)
-        );
+        const value = decodeURIComponent(pair.slice(separatorIndex + 1));
         headers[key] = value;
       }
       return headers;
@@ -763,10 +753,7 @@
         type: "warning",
         message: "GM_fetch not found. Run workaround..."
       });
-      window.tmp = await remoteImport(
-        "https://cdn.jsdelivr.net/npm/@trim21/gm-fetch",
-        "GM_fetch"
-      );
+      window.tmp = await remoteImport("https://cdn.jsdelivr.net/npm/@trim21/gm-fetch", "GM_fetch");
       eval("GM_fetch = window.tmp;");
     }
     return GM_fetch(requestUrl, {
@@ -787,9 +774,7 @@
   replaceLogo();
   waitForElement("footer .pt-2.justify-between.sm\\:flex").then(injectCredit);
   document.addEventListener("DOMContentLoaded", () => {
-    const element = document.querySelector(
-      "footer .pt-2.justify-between.sm\\:flex"
-    );
+    const element = document.querySelector("footer .pt-2.justify-between.sm\\:flex");
     injectCredit(element);
   });
   if (isHostnameContains("player.phimapi", "streamc", "opstream")) {
@@ -797,10 +782,7 @@
   } else if (isHostnameContains("nguonc")) {
     detectEpisodeList("#content", "#list_episode > div:nth-child(2)");
   } else if (isHostnameContains("ophim")) {
-    detectEpisodeList(
-      ".container",
-      ".mt-0 > div[id^=headlessui-disclosure-panel] > div"
-    );
+    detectEpisodeList(".container", ".mt-0 > div[id^=headlessui-disclosure-panel] > div");
   } else {
     detectEpisodeList("#content > div", "#list_episode > div:nth-child(2)");
   }
