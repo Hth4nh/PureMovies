@@ -364,17 +364,17 @@
     const encryptedURL = (_a = raw.match(new RegExp('(?<=encryptedURL = ").*(?=";)'))) == null ? void 0 : _a[0];
     if (encryptedURL) {
       const playlistUrl2 = `conf.php?url=${encodeURIComponent(encryptedURL)}`;
-      return ((_b = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _b.href) || "";
+      return ((_b = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _b.href) || "";
     }
     const streamURL = (_c = raw.match(new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":)\\s?").*(?="(?:;|,|}))'))) == null ? void 0 : _c[0];
     if (streamURL) {
       const playlistUrl2 = JSON.parse(`"${streamURL}"`);
-      return ((_d = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _d.href) || "";
+      return ((_d = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _d.href) || "";
     }
     const streamURLInScriptTag = (_e = raw.match(new RegExp('(?<=<script.*?src=".*?url=)[^&"]*?\\.m3u8[^&"]*'))) == null ? void 0 : _e[0];
     if (streamURLInScriptTag) {
       const playlistUrl2 = decodeURIComponent(streamURLInScriptTag);
-      return ((_f = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _f.href) || "";
+      return ((_f = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _f.href) || "";
     }
     const apiReq = await unrestrictedFetch(`${embedUrl2.origin}${embedUrl2.pathname}?api=stream`, {
       ...options2,
@@ -390,7 +390,7 @@
     const apiStreamURL = (_g = apiRaw.match(new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":)\\s?").*(?="(?:;|,|}))'))) == null ? void 0 : _g[0];
     if (apiStreamURL) {
       const playlistUrl2 = JSON.parse(`"${apiStreamURL}"`);
-      return ((_h = URL.parse(playlistUrl2, embedUrl2)) == null ? void 0 : _h.href) || "";
+      return ((_h = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _h.href) || "";
     }
     const encryptedPayload = (_i = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _i[0];
     if (encryptedPayload) {
