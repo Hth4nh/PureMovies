@@ -34,23 +34,28 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
         return URL.parse(playlistUrl, embedUrl.href)?.href || "";
     }
 
-    // Try to find the stream URL from API
-    const apiReq = await unrestrictedFetch(`${embedUrl.origin}${embedUrl.pathname}?api=stream`, {
-        ...options,
-        method: "POST",
-        headers: {
-            ...options.headers,
-            "Content-Type": "application/json",
-            Referer: embedUrl.href,
-        },
-        body: JSON.stringify({ hash: embedUrl.searchParams.get("hash") }),
-    });
+    // If no URL is found, try to find the authToken and try to find the stream URL from API
+    const authToken = raw.match(/(?<=authToken = ['"]).*(?=['"])/)?.[0];
+    if (authToken) {
+        const apiReq = await unrestrictedFetch(`${embedUrl.origin}${embedUrl.pathname}?api=stream`, {
+            ...options,
+            method: "POST",
+            headers: {
+                ...options.headers,
+                Referer: embedUrl.href,
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest",
+                "X-Embed-Auth": authToken,
+            },
+            body: JSON.stringify({ hash: embedUrl.searchParams.get("hash") }),
+        });
 
-    const apiRaw = await apiReq.text();
-    const apiStreamURL = apiRaw.match(/(?<=(?:streamURL =|url =|file:|streamUrl":)\s?").*(?="(?:;|,|}))/)?.[0];
-    if (apiStreamURL) {
-        const playlistUrl = JSON.parse(`"${apiStreamURL}"`);
-        return URL.parse(playlistUrl, embedUrl.href)?.href || "";
+        const apiRaw = await apiReq.text();
+        const apiStreamURL = apiRaw.match(/(?<=(?:streamURL =|url =|file:|streamUrl":)\s?").*(?="(?:;|,|}))/)?.[0];
+        if (apiStreamURL) {
+            const playlistUrl = JSON.parse(`"${apiStreamURL}"`);
+            return URL.parse(playlistUrl, embedUrl.href)?.href || "";
+        }
     }
 
     // If no URL is found, try to find the encrypted payload and resend the request with it
