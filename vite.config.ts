@@ -24,6 +24,7 @@ const kkphimMatch = [
 const nguoncMatch = ["https://phim.nguonc.com/*", "https://*.streamc.xyz/*"];
 
 const ophimMatch = [
+    "https://ophim16.cc/*",
     "https://ophim17.cc/*",
     "https://vip.opstream10.com/share/*",
     "https://vip.opstream11.com/share/*",
