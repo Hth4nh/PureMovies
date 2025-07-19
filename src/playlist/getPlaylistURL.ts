@@ -53,8 +53,13 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
         const apiRaw = await apiReq.text();
         const apiStreamURL = apiRaw.match(/(?<=(?:streamURL =|url =|file:|streamUrl":)\s?").*(?="(?:;|,|}))/)?.[0];
         if (apiStreamURL) {
-            const playlistUrl = JSON.parse(`"${apiStreamURL}"`);
-            return URL.parse(playlistUrl, embedUrl.href)?.href || "";
+            const playlistUrl = JSON.parse(`"${apiStreamURL}"`) as string;
+            if (playlistUrl.includes("?")) {
+                return URL.parse(playlistUrl, embedUrl.href)?.href || "";
+            } else {
+                const decodesPlaylistUrl = atob(playlistUrl);
+                return URL.parse(decodesPlaylistUrl, embedUrl.href)?.href || "";
+            }
         }
     }
 
