@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.2.7
+// @version                2.2.8
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -15,6 +15,7 @@
 // @match                  https://player.phimapi.com/player/*
 // @match                  https://phim.nguonc.com/*
 // @match                  https://*.streamc.xyz/*
+// @match                  https://ophim16.cc/*
 // @match                  https://ophim17.cc/*
 // @match                  https://vip.opstream10.com/share/*
 // @match                  https://vip.opstream11.com/share/*
@@ -352,7 +353,7 @@
     }
   }
   async function getPlaylistURLFromNguonC(embedUrl2, options2 = {}, retry = 0) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
     if (retry > 3) {
       console.warn("Failed to get playlist URL after multiple attempts.");
       return "";
@@ -394,10 +395,15 @@
       const apiStreamURL = (_h = apiRaw.match(new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":)\\s?").*(?="(?:;|,|}))'))) == null ? void 0 : _h[0];
       if (apiStreamURL) {
         const playlistUrl2 = JSON.parse(`"${apiStreamURL}"`);
-        return ((_i = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _i.href) || "";
+        if (playlistUrl2.includes("?")) {
+          return ((_i = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _i.href) || "";
+        } else {
+          const decodesPlaylistUrl = atob(playlistUrl2);
+          return ((_j = URL.parse(decodesPlaylistUrl, embedUrl2.href)) == null ? void 0 : _j.href) || "";
+        }
       }
     }
-    const encryptedPayload = (_j = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _j[0];
+    const encryptedPayload = (_k = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _k[0];
     if (encryptedPayload) {
       const optionsWithPayload = {
         ...options2,
