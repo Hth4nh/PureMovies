@@ -21,7 +21,9 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
     }
 
     // Try to find the stream URL in the response
-    const streamURL = raw.match(/(?<=(?:streamURL =|url =|file:|streamUrl":)\s?").*(?="(?:;|,|}))/)?.[0];
+    const streamURL = raw.match(
+        /(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\s?").*(?="(?:;|,|}|>))/,
+    )?.[0];
     if (streamURL) {
         const playlistUrl = JSON.parse(`"${streamURL}"`);
         return URL.parse(playlistUrl, embedUrl.href)?.href || "";
