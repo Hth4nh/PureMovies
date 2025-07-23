@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.2.8
+// @version                2.2.9
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -367,7 +367,9 @@
       const playlistUrl2 = `conf.php?url=${encodeURIComponent(encryptedURL)}`;
       return ((_b = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _b.href) || "";
     }
-    const streamURL = (_c = raw.match(new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":)\\s?").*(?="(?:;|,|}))'))) == null ? void 0 : _c[0];
+    const streamURL = (_c = raw.match(
+      new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\\s?").*(?="(?:;|,|}|>))')
+    )) == null ? void 0 : _c[0];
     if (streamURL) {
       const playlistUrl2 = JSON.parse(`"${streamURL}"`);
       return ((_d = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _d.href) || "";
@@ -425,7 +427,7 @@
       return embedUrl2.searchParams.get("url") ?? "";
     }
     if (embedUrl2.hostname.includes("opstream")) {
-      const req = await fetch(embedUrl2);
+      const req = await unrestrictedFetch(embedUrl2);
       const raw = await req.text();
       const playlistUrl2 = (_a = raw.match(new RegExp('(?<=const url = ").*(?=";)'))) == null ? void 0 : _a[0];
       return ((_b = URL.parse(String(playlistUrl2), embedUrl2)) == null ? void 0 : _b.href) || "";
