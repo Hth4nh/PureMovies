@@ -96,7 +96,7 @@ export async function getPlaylistURL(embedUrl: string | URL) {
 
     // ophim
     if (embedUrl.hostname.includes("opstream")) {
-        const req = await fetch(embedUrl);
+        const req = await unrestrictedFetch(embedUrl);
         const raw = await req.text();
 
         const playlistUrl = raw.match(/(?<=const url = ").*(?=";)/)?.[0];
