@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   Cuki's PureMovie
 // @namespace              Hth4nh
-// @version                2.2.10
+// @version                2.2.11
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
@@ -368,7 +368,7 @@
       return ((_b = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _b.href) || "";
     }
     const streamURL = (_c = raw.match(
-      new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\\s?").*(?="(?:;|,|}|>))')
+      new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\\s?").*(?="(?:;|,|}|>|\\n))')
     )) == null ? void 0 : _c[0];
     if (streamURL) {
       const playlistUrl2 = JSON.parse(`"${streamURL}"`);
