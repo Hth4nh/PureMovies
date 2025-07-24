@@ -37,8 +37,8 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
     }
 
     // If no URL is found, try to find the authToken and try to find the stream URL from API
-    const authToken = raw.match(/(?<=authToken = ['"]).*(?=['"])/)?.[0];
-    if (authToken) {
+    if (raw.match(/fetch\('\?api=stream'/)) {
+        const authToken = raw.match(/(?<=authToken = ['"]).*(?=['"])/)?.[0];
         const apiReq = await unrestrictedFetch(`${embedUrl.origin}${embedUrl.pathname}?api=stream`, {
             ...options,
             method: "POST",
@@ -47,7 +47,8 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
                 Referer: embedUrl.href,
                 "Content-Type": "application/json",
                 "X-Requested-With": "XMLHttpRequest",
-                "X-Embed-Auth": authToken,
+                "X-Embed-Auth": authToken ?? "",
+                "X-Requuest-With": "XMLHttpRequest",
             },
             body: JSON.stringify({ hash: embedUrl.searchParams.get("hash") }),
         });
@@ -56,7 +57,7 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
         const apiStreamURL = apiRaw.match(/(?<=(?:streamURL =|url =|file:|streamUrl":)\s?").*(?="(?:;|,|}))/)?.[0];
         if (apiStreamURL) {
             const playlistUrl = JSON.parse(`"${apiStreamURL}"`) as string;
-            if (playlistUrl.includes("?")) {
+            if (playlistUrl.includes("?") || playlistUrl.includes("/") || playlistUrl.includes(".m3u8")) {
                 return URL.parse(playlistUrl, embedUrl.href)?.href || "";
             } else {
                 const decodesPlaylistUrl = atob(playlistUrl);
