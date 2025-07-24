@@ -22,7 +22,7 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
 
     // Try to find the stream URL in the response
     const streamURL = raw.match(
-        /(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\s?").*(?="(?:;|,|}|>))/,
+        /(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\s?").*(?="(?:;|,|}|>|\n))/,
     )?.[0];
     if (streamURL) {
         const playlistUrl = JSON.parse(`"${streamURL}"`);
