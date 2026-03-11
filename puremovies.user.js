@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name                   Cuki's PureMovie
+// @name                   PureMovies
 // @namespace              Hth4nh
 // @version                2.2.11
 // @author                 Hth4nh
-// @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
+// @description            PureMovies là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @homepageURL            https://github.com/Hth4nh/PureMovies
 // @downloadURL            https://hth4nh.github.io/PureMovies/puremovies.user.js
 // @updateURL              https://hth4nh.github.io/PureMovies/puremovies.meta.js
