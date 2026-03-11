@@ -73,12 +73,12 @@ export async function createPlayer(playlistUrl: string | URL = "") {
                     }
                 },
             },
-            {
-                position: "right",
-                html: `<img src="${logoURL}" style="height: 25px; padding: 0 7px; transform: translateY(-12%);">`,
-                index: 1,
-                tooltip: config.name,
-            },
+            // {
+            //     position: "right",
+            //     html: `<img src="${logoURL}" style="height: 25px; padding: 0 7px; transform: translateY(-12%);">`,
+            //     index: 1,
+            //     tooltip: config.name,
+            // },
         ],
     });
 }
