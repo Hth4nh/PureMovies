@@ -15,7 +15,7 @@ import {
     detectEpisodeList,
     injectCredit,
     replaceEmbedPlayerContainer,
-    replaceLogo,
+    // replaceLogo,
     waitForElement,
 } from "./ui";
 
