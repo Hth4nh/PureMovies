@@ -21,7 +21,7 @@ import {
 
 addStylesheet("https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css");
 
-replaceLogo();
+// replaceLogo();
 
 waitForElement("footer .pt-2.justify-between.sm\\:flex").then(injectCredit);
 

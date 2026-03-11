@@ -1,6 +1,8 @@
-<h1><img src="https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png" alt="icon" style="vertical-align: middle; width: 60px; height: 60px; margin-right: 5px;">&nbsp; &nbsp;Cuki's PureMovie</h1>
+<!-- <h1><img src="https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png" alt="icon" style="vertical-align: middle; width: 60px; height: 60px; margin-right: 5px;">&nbsp; &nbsp;Cuki's PureMovie</h1> -->
 
-Cuki's PureMovie là một userscript hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
+<h1>PureMovie</h1>
+
+PureMovie là một userscript hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 
 &nbsp;
 
