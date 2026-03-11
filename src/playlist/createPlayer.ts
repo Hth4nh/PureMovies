@@ -1,11 +1,11 @@
-import logoURL from "../assets/images/logo.svg";
+// import logoURL from "../assets/images/logo.svg";
 import backwardIconURL from "../assets/icons/backward.svg";
 import forwardIconURL from "../assets/icons/forward.svg";
 
 import Artplayer from "artplayer";
 import vi from "artplayer/src/i18n/vi.js";
 
-import { config, instances } from "../misc/state";
+import { /* config, */ instances } from "../misc/state";
 import { getSvgMarkupFromDataUrl } from "../misc/getSvgMarkupFromDataUrl";
 import { createNotification } from "../ui";
 import { remoteImport } from "../misc/remoteImport";
