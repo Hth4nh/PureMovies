@@ -4,7 +4,6 @@
 // @version                2.2.11
 // @author                 Hth4nh
 // @description            Cuki's PureMovie là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
-// @icon                   https://raw.githubusercontent.com/Hth4nh/PureMovies/refs/heads/main/src/assets/images/favicon.png
 // @homepageURL            https://github.com/Hth4nh/PureMovies
 // @downloadURL            https://hth4nh.github.io/PureMovies/puremovies.user.js
 // @updateURL              https://hth4nh.github.io/PureMovies/puremovies.meta.js
@@ -79,13 +78,6 @@
     } catch (error) {
       console.error(error);
     }
-  }
-  function addStyle(css) {
-    const parent = document.head ?? document.querySelector("html");
-    const style = document.createElement("style");
-    style.textContent = css;
-    parent.appendChild(style);
-    return style;
   }
   function addStylesheet(...urls) {
     const parent = document.head ?? document.querySelector("html");
@@ -638,13 +630,6 @@
       changePlayerURL(location.href);
     });
   }
-  async function replaceLogo() {
-    addStyle(`
-        .mr-3.flex-none.overflow-hidden.w-auto > span > a > img {
-            content: url("${logoURL}") / "${config.name}";
-        }
-    `);
-  }
   function scrollIntoView(element, offset = {}) {
     if (!element) {
       console.warn("scrollIntoView called with no element.");
@@ -785,7 +770,6 @@
     }
   });
   addStylesheet("https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css");
-  replaceLogo();
   waitForElement("footer .pt-2.justify-between.sm\\:flex").then(injectCredit);
   document.addEventListener("DOMContentLoaded", () => {
     const element = document.querySelector("footer .pt-2.justify-between.sm\\:flex");
