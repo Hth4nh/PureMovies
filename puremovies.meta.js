@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   PureMovies
 // @namespace              Hth4nh
-// @version                2.2.11.1
+// @version                2.2.12
 // @author                 Hth4nh
 // @description            PureMovies là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @homepageURL            https://github.com/Hth4nh/PureMovies
