@@ -13,6 +13,20 @@ async function getPlaylistURLFromNguonC(embedUrl: string | URL, options: Request
     const req = await unrestrictedFetch(embedUrl, options);
     const raw = await req.text();
 
+    // Try to find stream URL in data-obf attribute
+    const dataObf = raw.match(/data-obf=["']([^"']+)["']/)?.[1];
+    if (dataObf) {
+        try {
+            const streamData = JSON.parse(atob(dataObf));
+            if (streamData?.sUb) {
+                const path = streamData.sUb.startsWith("/") ? streamData.sUb : `/${streamData.sUb}`;
+                return URL.parse(path, embedUrl.href)?.href || "";
+            }
+        } catch (e) {
+            console.error("Error parsing data-obf in NguonC:", e);
+        }
+    }
+
     // Try to find the encrypted URL in the response
     const encryptedURL = raw.match(/(?<=encryptedURL = ").*(?=";)/)?.[0];
     if (encryptedURL) {
