@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name                   PureMovies
 // @namespace              Hth4nh
-// @version                2.2.12
+// @version                2.2.13
 // @author                 Hth4nh
 // @description            PureMovies là một user-script hoàn hảo dành cho những ai yêu thích trải nghiệm xem phim liền mạch, không bị gián đoạn bởi quảng cáo "lậu" trong phim. Hy vọng sẽ mang đến cảm giác thoải mái và tập trung, giúp bạn tận hưởng từng khoảnh khắc của bộ phim một cách trọn vẹn nhất.
 // @homepageURL            https://github.com/Hth4nh/PureMovies
@@ -344,7 +344,7 @@
     }
   }
   async function getPlaylistURLFromNguonC(embedUrl2, options2 = {}, retry = 0) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
     if (retry > 3) {
       console.warn("Failed to get playlist URL after multiple attempts.");
       return "";
@@ -353,25 +353,37 @@
     embedUrl2.searchParams.append("api", "stream");
     const req = await unrestrictedFetch(embedUrl2, options2);
     const raw = await req.text();
-    const encryptedURL = (_a = raw.match(new RegExp('(?<=encryptedURL = ").*(?=";)'))) == null ? void 0 : _a[0];
+    const dataObf = (_a = raw.match(/data-obf=["']([^"']+)["']/)) == null ? void 0 : _a[1];
+    if (dataObf) {
+      try {
+        const streamData = JSON.parse(atob(dataObf));
+        if (streamData == null ? void 0 : streamData.sUb) {
+          const path = streamData.sUb.startsWith("/") ? streamData.sUb : `/${streamData.sUb}`;
+          return ((_b = URL.parse(path, embedUrl2.href)) == null ? void 0 : _b.href) || "";
+        }
+      } catch (e2) {
+        console.error("Error parsing data-obf in NguonC:", e2);
+      }
+    }
+    const encryptedURL = (_c = raw.match(new RegExp('(?<=encryptedURL = ").*(?=";)'))) == null ? void 0 : _c[0];
     if (encryptedURL) {
       const playlistUrl2 = `conf.php?url=${encodeURIComponent(encryptedURL)}`;
-      return ((_b = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _b.href) || "";
-    }
-    const streamURL = (_c = raw.match(
-      new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\\s?").*(?="(?:;|,|}|>|\\n))')
-    )) == null ? void 0 : _c[0];
-    if (streamURL) {
-      const playlistUrl2 = JSON.parse(`"${streamURL}"`);
       return ((_d = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _d.href) || "";
     }
-    const streamURLInScriptTag = (_e = raw.match(new RegExp('(?<=<script.*?src=".*?url=)[^&"]*?\\.m3u8[^&"]*'))) == null ? void 0 : _e[0];
-    if (streamURLInScriptTag) {
-      const playlistUrl2 = decodeURIComponent(streamURLInScriptTag);
+    const streamURL = (_e = raw.match(
+      new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":|data-stream-url=)\\s?").*(?="(?:;|,|}|>|\\n))')
+    )) == null ? void 0 : _e[0];
+    if (streamURL) {
+      const playlistUrl2 = JSON.parse(`"${streamURL}"`);
       return ((_f = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _f.href) || "";
     }
+    const streamURLInScriptTag = (_g = raw.match(new RegExp('(?<=<script.*?src=".*?url=)[^&"]*?\\.m3u8[^&"]*'))) == null ? void 0 : _g[0];
+    if (streamURLInScriptTag) {
+      const playlistUrl2 = decodeURIComponent(streamURLInScriptTag);
+      return ((_h = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _h.href) || "";
+    }
     if (raw.match(/fetch\('\?api=stream'/)) {
-      const authToken = (_g = raw.match(new RegExp(`(?<=authToken = ['"]).*(?=['"])`))) == null ? void 0 : _g[0];
+      const authToken = (_i = raw.match(new RegExp(`(?<=authToken = ['"]).*(?=['"])`))) == null ? void 0 : _i[0];
       const apiReq = await unrestrictedFetch(`${embedUrl2.origin}${embedUrl2.pathname}?api=stream`, {
         ...options2,
         method: "POST",
@@ -386,18 +398,18 @@
         body: JSON.stringify({ hash: embedUrl2.searchParams.get("hash") })
       });
       const apiRaw = await apiReq.text();
-      const apiStreamURL = (_h = apiRaw.match(new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":)\\s?").*(?="(?:;|,|}))'))) == null ? void 0 : _h[0];
+      const apiStreamURL = (_j = apiRaw.match(new RegExp('(?<=(?:streamURL =|url =|file:|streamUrl":)\\s?").*(?="(?:;|,|}))'))) == null ? void 0 : _j[0];
       if (apiStreamURL) {
         const playlistUrl2 = JSON.parse(`"${apiStreamURL}"`);
         if (playlistUrl2.includes("?") || playlistUrl2.includes("/") || playlistUrl2.includes(".m3u8")) {
-          return ((_i = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _i.href) || "";
+          return ((_k = URL.parse(playlistUrl2, embedUrl2.href)) == null ? void 0 : _k.href) || "";
         } else {
           const decodesPlaylistUrl = atob(playlistUrl2);
-          return ((_j = URL.parse(decodesPlaylistUrl, embedUrl2.href)) == null ? void 0 : _j.href) || "";
+          return ((_l = URL.parse(decodesPlaylistUrl, embedUrl2.href)) == null ? void 0 : _l.href) || "";
         }
       }
     }
-    const encryptedPayload = (_k = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _k[0];
+    const encryptedPayload = (_m = raw.match(new RegExp('(?<=input.value = ").*(?=";)'))) == null ? void 0 : _m[0];
     if (encryptedPayload) {
       const optionsWithPayload = {
         ...options2,
